@@ -5,140 +5,278 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231e1e24'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23dcdce4'/%3E%3C/svg%3E">
 <meta property="og:title" content="Rewynd">
-<meta property="og:description" content="Record, clip, edit, stream and share your games on Windows. Press Alt+C to save the last moments. Light on your PC.">
+<meta property="og:description" content="Record, clip, edit, stream and share your games on Windows. Try it right on the page.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0e0f14">
 <title>Rewynd</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Rewynd records, clips, edits and streams your games on Windows, and stays light on your PC. Press Alt+C to save the last moments.">
+<meta name="description" content="Rewynd records, clips, edits and streams your games on Windows, and stays light on your PC. Try it right on this page.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: one dark page, a wide stage for the overlay mock, then a narrow reading column with full-width bands.
-   Single dark look on purpose: it's the app's own palette, the colors of a game overlay. */
+/* Layout: a playable demo up top (a little game with the real Rewynd overlay on it), then a reading column with full-width bands.
+   One dark look on purpose: it's the app's own palette. The theme picker in the demo swaps --accent / --accent2 for the whole page. */
 :root {
-  --bg: #0e0f14;        /* the app's background, a touch deeper */
-  --panel: #171922;     /* widgets */
-  --panel2: #1f2230;    /* buttons, rows */
+  --bg: #0e0f14;
+  --panel: #171922;
+  --panel2: #1f2230;
   --line: #2a2e3d;
   --fg: #ecedf3;
   --dim: #9a9eb2;
-  --accent: #6c7bff;    /* Rewynd accent */
+  --accent: #6c7bff;
   --accent2: #a06bff;
-  --rec: #ff4d5e;       /* recording red */
+  --rec: #ff4d5e;
   --ok: #3ddc97;
+  --warn: #f5b84a;
   --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
   --body: "Figtree", "Segoe UI", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-  --wrap: 1120px;
+  --wrap: 1180px;
   color-scheme: dark;
 }
+[hidden] { display: none !important; }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; background: var(--bg); }
-body { background: var(--bg); color: var(--fg); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
+button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1, h2, h3, h4 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
 p { margin: 0; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .eyebrow { font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
 .key { display: inline-flex; align-items: center; gap: 3px; font: 700 0.82em/1 var(--mono); color: var(--fg); white-space: nowrap; }
-.key kbd { font: inherit; padding: 0.38em 0.55em 0.3em; border-radius: 7px; background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 3px; }
+.key kbd, kbd.k { font: 700 0.82em/1 var(--mono); padding: 0.38em 0.55em 0.3em; border-radius: 7px; background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 3px; color: var(--fg); }
+.key kbd { font-size: 1em; }
 
 /* ---- top navigation */
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 29; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
 .nav .wrap { display: flex; align-items: center; gap: 28px; height: 62px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 20px/1 var(--display); letter-spacing: 0.01em; }
-.mark { width: 26px; height: 26px; border-radius: 50%; background: #1e1e24; display: grid; place-items: center; box-shadow: inset 0 0 0 1px #34343d; }
-.mark::after { content: ""; width: 11px; height: 11px; border-radius: 50%; background: #dcdce4; }
+.mark { width: 26px; height: 26px; border-radius: 50%; background: #1e1e24; display: inline-grid; place-items: center; box-shadow: inset 0 0 0 1px #34343d; flex: none; }
+.mark::after { content: ""; width: 42%; height: 42%; border-radius: 50%; background: #dcdce4; }
 .nav nav { display: flex; gap: 22px; margin-left: auto; }
 .nav nav a { text-decoration: none; color: var(--dim); font-weight: 500; font-size: 15px; }
 .nav nav a:hover { color: var(--fg); }
-.btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 600 16px/1 var(--body); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel2); color: var(--fg); transition: transform .15s ease, background .15s ease; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font: 600 16px/1 var(--body); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel2); color: var(--fg); cursor: pointer; transition: transform .15s ease, background .15s ease; }
 .btn:hover { transform: translateY(-1px); background: #272b3b; }
 .btn.go { border: 0; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 8px 28px -10px color-mix(in srgb, var(--accent) 70%, transparent); }
-.btn.go:hover { background: linear-gradient(135deg, #7d8aff, #ad7dff); }
+.btn.go:hover { filter: brightness(1.08); }
 .btn.small { padding: 10px 14px; font-size: 14px; }
 .btn svg { width: 18px; height: 18px; flex: none; }
 
 /* ---- hero */
-.hero { padding-block: 72px 40px; }
-.hero-text { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: end; }
-.hero h1 { font-size: clamp(44px, 7.4vw, 92px); font-weight: 700; letter-spacing: -0.02em; }
-.hero h1 .k { display: inline-block; }
+.hero { padding-block: 56px 24px; }
+.hero-text { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.hero h1 { font-size: clamp(44px, 7vw, 88px); font-weight: 700; letter-spacing: -0.02em; }
 .hero h1 em { font-style: normal; background: linear-gradient(120deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero .lede { color: var(--dim); font-size: 19px; max-width: 34ch; }
-.hero .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.hero .lede { color: var(--dim); font-size: 19px; max-width: 36ch; }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .hero .fine { margin-top: 14px; color: var(--dim); font-size: 14px; }
 
-/* ---- the overlay mock: a game picture with Rewynd's overlay on top (sizes follow the box, so it scales on phones) */
-.stage { margin-top: 48px; position: relative; container-type: inline-size; border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; border: 1px solid var(--line); box-shadow: 0 40px 120px -40px #000, 0 0 0 1px #000; background: #0b0c12; }
-.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.ov { position: absolute; font-family: "Segoe UI", var(--body); color: var(--fg); }
-.ov-bar { left: 50%; top: 2.2cqw; transform: translateX(-50%); display: flex; align-items: center; gap: 1.6cqw; padding: 0.9cqw 1.6cqw; border-radius: 1.2cqw; background: rgba(17, 18, 23, .86); border: 1px solid rgba(255,255,255,.07); font-size: 1.25cqw; backdrop-filter: blur(8px); white-space: nowrap; }
-.ov-bar .rec { display: inline-flex; align-items: center; gap: .6cqw; color: var(--fg); }
-.ov-bar .rec i { width: .8cqw; height: .8cqw; border-radius: 50%; background: var(--rec); box-shadow: 0 0 0 .3cqw rgba(255,77,94,.22); }
-.ov-bar .sep { width: 1px; height: 1.6cqw; background: rgba(255,255,255,.12); }
-.ov-bar .ic { display: flex; gap: 1cqw; }
-.ov-bar .ic b { width: 2.2cqw; height: 2.2cqw; border-radius: .6cqw; background: rgba(255,255,255,.06); display: grid; place-items: center; font-weight: 600; font-size: 1.05cqw; color: var(--dim); }
-.ov-bar .ic b.on { background: rgba(108,123,255,.22); color: #c9cfff; }
-.bat { display: inline-flex; align-items: center; gap: .5cqw; }
-.bat span { position: relative; width: 2.3cqw; height: 1.15cqw; border: .14cqw solid #cfd0da; border-radius: .3cqw; }
-.bat span::before { content: ""; position: absolute; inset: .14cqw; right: 22%; background: var(--ok); border-radius: .12cqw; }
-.bat span::after { content: ""; position: absolute; right: -.45cqw; top: 25%; width: .25cqw; height: 50%; background: #cfd0da; border-radius: 0 .1cqw .1cqw 0; }
-.ov-fps { left: 2cqw; top: 2.2cqw; padding: .7cqw 1.1cqw; border-radius: .9cqw; background: rgba(17,18,23,.72); font: 700 1.15cqw/1.3 var(--mono); }
-.ov-fps small { display: block; font-weight: 500; color: var(--dim); font-size: .95cqw; }
-.ov-fps .n { color: var(--ok); font-size: 1.9cqw; }
-.ov-toast { right: 2.2cqw; bottom: 2.4cqw; width: 30cqw; padding: 1.4cqw; border-radius: 1.4cqw; background: rgba(23,25,34,.94); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 2cqw 5cqw -1cqw rgba(0,0,0,.7); }
-.ov-toast .t { display: flex; align-items: center; gap: .8cqw; font-weight: 600; font-size: 1.5cqw; }
-.ov-toast .t i { width: 1.1cqw; height: 1.1cqw; border-radius: 50%; background: var(--ok); }
-.ov-toast .s { color: var(--dim); font-size: 1.1cqw; margin-top: .3cqw; }
-.strip { position: relative; display: grid; grid-template-columns: repeat(8, 1fr); gap: .25cqw; margin-top: 1.1cqw; height: 3.4cqw; }
-.strip span { border-radius: .35cqw; background: linear-gradient(160deg, #3a2f5e, #1b2e4a 60%, #3d2a3a); }
-.strip span:nth-child(3n) { background: linear-gradient(160deg, #2e3f5f, #422c4f); }
-.strip .sel { position: absolute; top: -.35cqw; bottom: -.35cqw; left: 18%; right: 9%; border: .3cqw solid var(--accent); border-radius: .6cqw; box-shadow: 0 0 0 100cqw rgba(14,15,20,.0); }
-.strip .sel::before, .strip .sel::after { content: ""; position: absolute; top: 25%; bottom: 25%; width: .4cqw; background: #fff; border-radius: .2cqw; }
-.strip .sel::before { left: -.35cqw; } .strip .sel::after { right: -.35cqw; }
-.ov-toast .row { display: flex; gap: .7cqw; margin-top: 1.1cqw; }
-.ov-toast .row b { flex: 1; text-align: center; font-weight: 600; font-size: 1.1cqw; padding: .75cqw 0; border-radius: .7cqw; background: rgba(255,255,255,.07); }
-.ov-toast .row b.a { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
-.ov-toast.pop { animation: pop .55s cubic-bezier(.2, 1.3, .4, 1) both; }
-@keyframes pop { from { transform: translateY(2cqw) scale(.94); opacity: .2; } to { transform: none; opacity: 1; } }
-.stage-note { margin-top: 14px; color: var(--dim); font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.stage-note button { font: 600 14px/1 var(--body); color: var(--fg); background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-.stage-note button:hover { background: #272b3b; }
+/* ================================================================ the demo */
+.demo { margin-top: 40px; container: demo / inline-size; }
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: #07080d; box-shadow: 0 40px 120px -40px #000, 0 0 0 1px #000; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.stage canvas.game { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; }
+.pills { position: absolute; left: 14px; top: 14px; display: flex; flex-wrap: wrap; gap: 8px; z-index: 2; pointer-events: none; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 999px; background: rgba(14, 15, 20, .72); border: 1px solid rgba(255,255,255,.08); font: 600 12px/1 var(--mono); backdrop-filter: blur(6px); white-space: nowrap; }
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+.pill.off i { background: #6b6f82; }
+.pill .buf { width: 46px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
+.pill .buf b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.pill.rec i { background: var(--rec); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+.hint { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 2; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; background: rgba(14,15,20,.8); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); font-weight: 600; font-size: 15px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); animation: ping 2.4s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 70%, 100% { box-shadow: 0 0 0 14px transparent; } }
+.flash { position: absolute; inset: 0; z-index: 9; pointer-events: none; background: #fff; opacity: 0; }
+.flash.go { animation: flash .45s ease-out; }
+@keyframes flash { 0% { opacity: .55; } 100% { opacity: 0; } }
 
-/* ---- replay buffer explainer */
+/* toasts sit above the overlay, like in the app */
+.toasts { position: absolute; right: 14px; bottom: 14px; z-index: 7; display: flex; flex-direction: column-reverse; gap: 10px; width: min(330px, calc(100% - 28px)); pointer-events: none; }
+.toast { pointer-events: auto; padding: 14px; border-radius: 14px; background: rgba(23,25,34,.96); border: 1px solid rgba(255,255,255,.09); box-shadow: 0 18px 50px -12px rgba(0,0,0,.8); animation: pop .5s cubic-bezier(.2, 1.3, .4, 1) both; }
+.toast.out { animation: out .3s ease-in forwards; }
+@keyframes pop { from { transform: translateY(18px) scale(.95); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes out { to { transform: translateX(30px); opacity: 0; } }
+.toast .t { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 15px; }
+.toast .t i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); flex: none; }
+.toast .t i.auto { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.toast .t i.warn { background: var(--warn); }
+.toast .s { color: var(--dim); font-size: 13px; margin-top: 2px; }
+.toast canvas.strip { display: block; width: 100%; height: 40px; border-radius: 7px; margin-top: 10px; }
+.toast .row { display: flex; gap: 6px; margin-top: 10px; }
+.toast .row button, .chip { flex: 1; font-weight: 600; font-size: 13px; padding: 8px 6px; border-radius: 8px; border: 0; background: rgba(255,255,255,.08); cursor: pointer; white-space: nowrap; }
+.toast .row button:hover, .chip:hover { background: rgba(255,255,255,.14); }
+.toast .row button.go, .chip.go { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.toast .row button.done { background: color-mix(in srgb, var(--ok) 22%, transparent); color: var(--ok); }
+
+/* the overlay: top bar + widgets you can drag */
+.overlay { position: absolute; inset: 0; z-index: 5; }
+.ov-dim { position: absolute; inset: 0; background: rgba(6, 7, 12, .5); backdrop-filter: blur(1.5px); animation: fade .25s ease both; }
+@keyframes fade { from { opacity: 0; } }
+.tb { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; border-radius: 14px; background: rgba(17,18,23,.95); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 12px 40px -12px #000; white-space: nowrap; animation: drop .3s cubic-bezier(.2,1.2,.4,1) both; }
+@keyframes drop { from { transform: translate(-50%, -16px); opacity: 0; } }
+.tb .mark { width: 20px; height: 20px; }
+.tb .rs { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--mono); color: var(--dim); margin: 0 6px 0 4px; }
+.tb .rs i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+.tb .sep { width: 1px; height: 20px; background: rgba(255,255,255,.1); margin: 0 4px; }
+.tb button { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; border: 0; background: transparent; color: var(--dim); cursor: pointer; }
+.tb button:hover { background: rgba(255,255,255,.07); color: var(--fg); }
+.tb button.on { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--fg); }
+.tb button svg { width: 18px; height: 18px; }
+.tb .clock { font: 500 12px/1 var(--mono); color: var(--dim); margin: 0 6px; }
+.w { position: absolute; z-index: 10; width: 280px; display: flex; flex-direction: column; border-radius: 14px; background: rgba(23,25,34,.96); border: 1px solid rgba(255,255,255,.09); box-shadow: 0 20px 60px -20px #000; overflow: hidden; animation: pop .35s cubic-bezier(.2,1.2,.4,1) both; }
+.w header { display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 14px; cursor: grab; border-bottom: 1px solid rgba(255,255,255,.06); flex: none; touch-action: none; }
+.w header:active { cursor: grabbing; }
+.w header h4 { font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+.w header .grip { margin-left: auto; color: #5d6178; font-size: 12px; }
+.w header button { width: 26px; height: 26px; border-radius: 7px; border: 0; background: transparent; color: var(--dim); cursor: pointer; font-size: 16px; line-height: 1; }
+.w header button:hover { background: rgba(255,255,255,.08); color: var(--fg); }
+.w .body { padding: 14px; overflow: auto; min-height: 0; display: grid; gap: 12px; align-content: start; }
+.w .note { color: var(--dim); font-size: 13px; line-height: 1.45; }
+
+.bigclip { display: grid; gap: 2px; padding: 14px; border-radius: 12px; border: 0; text-align: left; cursor: pointer; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.bigclip span { font-weight: 700; font-size: 17px; }
+.bigclip small { opacity: .8; font-size: 12.5px; }
+.bigclip:hover { filter: brightness(1.08); }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.duo .chip { padding: 10px 6px; }
+.chip.rec { background: color-mix(in srgb, var(--rec) 24%, transparent); color: #ffd3d8; }
+.sw { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
+.sw input { position: absolute; opacity: 0; pointer-events: none; }
+.sw span { width: 34px; height: 20px; border-radius: 999px; background: #3a3e52; position: relative; transition: background .2s; flex: none; }
+.sw span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.sw input:checked + span { background: var(--accent); }
+.sw input:checked + span::after { transform: translateX(14px); }
+.sw input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sw em { font-style: normal; color: var(--dim); font-size: 12.5px; margin-left: auto; }
+
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.tile { position: relative; padding: 0; border: 0; border-radius: 9px; overflow: hidden; background: #11131b; cursor: pointer; aspect-ratio: 16 / 9; }
+.tile canvas { width: 100%; height: 100%; display: block; }
+.tile span { position: absolute; left: 6px; bottom: 5px; font: 600 10.5px/1 var(--mono); padding: 3px 5px; border-radius: 5px; background: rgba(0,0,0,.65); }
+.tile b { position: absolute; right: 6px; top: 5px; font-size: 10px; font-weight: 700; padding: 3px 6px; border-radius: 5px; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.tile:hover { outline: 2px solid var(--accent); outline-offset: -2px; }
+.empty { display: grid; place-items: center; text-align: center; gap: 6px; padding: 18px 8px; border: 1px dashed #343850; border-radius: 10px; color: var(--dim); font-size: 13.5px; }
+
+.pads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.pad { padding: 12px 4px; border-radius: 10px; border: 0; cursor: pointer; font-weight: 600; font-size: 12.5px; background: #262a3a; transition: transform .08s; position: relative; overflow: hidden; }
+.pad:hover { background: #2e3346; }
+.pad:active, .pad.hit { transform: scale(.95); background: color-mix(in srgb, var(--accent) 40%, #262a3a); }
+.pad small { display: block; font-size: 18px; margin-bottom: 2px; }
+.tts { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
+.tts input, .tts select { min-width: 0; font: 500 13.5px/1.2 var(--body); color: var(--fg); background: #11131b; border: 1px solid #30344a; border-radius: 9px; padding: 9px 10px; }
+.tts input { grid-column: 1 / -1; }
+.lbl { font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+
+.perf canvas { width: 100%; height: 72px; display: block; border-radius: 9px; background: #11131b; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.stats div { display: grid; gap: 2px; }
+.stats b { font: 700 16px/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+.stats span { color: var(--dim); font-size: 11.5px; }
+
+.post { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.post:last-child { border-bottom: 0; padding-bottom: 0; }
+.post .who { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.post .av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; color: #fff; flex: none; }
+.post .who span { color: var(--dim); }
+.post .cotw { margin-left: auto; font-size: 10.5px; font-weight: 700; padding: 3px 7px; border-radius: 6px; background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); white-space: nowrap; }
+.post canvas { width: 100%; aspect-ratio: 16 / 9; height: auto; display: block; border-radius: 9px; background: #11131b; }
+.post .ttl { font-weight: 600; font-size: 14px; }
+.post .act { display: flex; gap: 6px; }
+.post .act button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; border: 0; background: rgba(255,255,255,.06); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--dim); }
+.post .act button.liked { color: #ff6b8a; background: rgba(255,107,138,.14); }
+.post .act button.liked .h { animation: heart .4s ease; }
+@keyframes heart { 50% { transform: scale(1.5); } }
+
+.swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.swatch { display: grid; gap: 6px; padding: 8px; border-radius: 10px; border: 1px solid transparent; background: #1c1f2b; cursor: pointer; font-size: 12.5px; font-weight: 600; text-align: left; }
+.swatch i { height: 26px; border-radius: 6px; }
+.swatch.on { border-color: var(--accent); }
+
+/* the clip editor */
+.editor { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; padding: 16px; background: rgba(6,7,12,.66); backdrop-filter: blur(3px); animation: fade .2s ease both; }
+.ed { width: min(640px, 100%); max-height: 100%; overflow: auto; border-radius: 16px; background: #171922; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 30px 80px -20px #000; animation: pop .35s cubic-bezier(.2,1.2,.4,1) both; }
+.ed header { display: flex; align-items: center; gap: 10px; padding: 12px 12px 12px 16px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.ed header h4 { font-size: 16px; }
+.ed header span { color: var(--dim); font-size: 13px; }
+.ed header button { margin-left: auto; width: 30px; height: 30px; border: 0; border-radius: 8px; background: transparent; color: var(--dim); font-size: 18px; cursor: pointer; }
+.ed header button:hover { background: rgba(255,255,255,.08); color: var(--fg); }
+.ed .in { padding: 14px 16px 16px; display: grid; gap: 12px; }
+.ed canvas.view { width: 100%; aspect-ratio: 16 / 9; height: auto; display: block; border-radius: 10px; background: #000; }
+.tl { position: relative; height: 50px; border-radius: 9px; overflow: hidden; }
+.tl:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tl canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.tl .sel { position: absolute; top: 0; bottom: 0; border: 3px solid var(--accent); border-radius: 9px; box-shadow: 0 0 0 999px rgba(10,11,16,.66); pointer-events: none; }
+.tl .sel::before, .tl .sel::after { content: ""; position: absolute; top: 30%; bottom: 30%; width: 4px; border-radius: 2px; background: #fff; }
+.tl .sel::before { left: 2px; } .tl .sel::after { right: 2px; }
+.tl .head { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; pointer-events: none; box-shadow: 0 0 6px #000; }
+.tl input[type=range] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.tl input[type=range]::-webkit-slider-runnable-track { background: none; height: 50px; }
+.tl input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 18px; height: 50px; background: transparent; cursor: ew-resize; }
+.tl input[type=range]::-moz-range-track { background: none; }
+.tl input[type=range]::-moz-range-thumb { pointer-events: auto; width: 18px; height: 50px; background: transparent; border: 0; cursor: ew-resize; }
+.ed .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ed .row .time { font: 600 13px/1 var(--mono); color: var(--dim); margin-right: auto; font-variant-numeric: tabular-nums; }
+.ed .row .chip { flex: none; padding: 9px 14px; }
+
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.controls .ctl { display: inline-flex; align-items: center; gap: 9px; padding: 9px 12px 9px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-weight: 600; font-size: 14px; }
+.controls .ctl:hover { background: var(--panel2); }
+.controls .ctl.primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); border-color: transparent; color: #fff; }
+.controls .ctl.primary kbd.k { background: rgba(0,0,0,.22); border-color: rgba(0,0,0,.25); color: #fff; }
+.controls .say { color: var(--dim); font-size: 13.5px; margin-left: auto; max-width: 42ch; }
+
+/* narrow screens: the overlay becomes a scrolling column of widgets */
+@container demo (max-width: 899px) {
+  .stage { aspect-ratio: 4 / 3; }
+  .overlay { overflow: auto; padding: 66px 12px 12px; display: flex; flex-direction: column; gap: 12px; }
+  .overlay { background: rgba(6, 7, 12, .62); }
+  .ov-dim { display: none; }
+  .tb { position: sticky; top: 0; left: auto; transform: none; align-self: center; margin-top: -54px; animation: none; }
+  .tb .rs, .tb .clock { display: none; }
+  .w { position: relative; left: auto !important; top: auto !important; width: auto !important; max-height: none !important; z-index: 10 !important; flex: none; }
+  .w header { cursor: default; }
+  .w header .grip { visibility: hidden; }
+  .controls .say { margin-left: 0; }
+}
+@container demo (max-width: 560px) {
+  .stage { aspect-ratio: 4 / 5; border-radius: 12px; }
+  .hint { font-size: 13px; }
+  .toasts { left: 10px; right: 10px; bottom: 10px; width: auto; }
+}
+
+/* ---- sections below the demo */
 .band { border-top: 1px solid var(--line); }
 .section { padding-block: 88px; }
 .section h2 { font-size: clamp(32px, 4.4vw, 52px); }
 .section .intro { color: var(--dim); max-width: 60ch; margin-top: 16px; font-size: 18px; }
 .buffer { margin-top: 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
-.tl { position: relative; height: 64px; border-radius: 10px; background: repeating-linear-gradient(90deg, #232636 0 2px, transparent 2px 100%) 0 0 / calc(100% / 24) 100%, #1a1d29; overflow: hidden; }
-.tl .kept { position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), color-mix(in srgb, var(--accent) 26%, transparent)); }
-.tl .trim { position: absolute; top: 4px; bottom: 4px; right: 6px; width: 10%; border-radius: 6px; border: 2px solid var(--accent2); background: color-mix(in srgb, var(--accent2) 40%, transparent); }
-.tl-key { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 16px; font-size: 14px; color: var(--dim); }
-.tl-key i { display: inline-block; width: 18px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
-.tl-key .k1 { background: color-mix(in srgb, var(--accent) 26%, transparent); } .tl-key .k2 { background: color-mix(in srgb, var(--accent2) 40%, transparent); border: 1px solid var(--accent2); }
-.tl .now { position: absolute; top: -6px; bottom: -6px; right: 0; width: 3px; background: var(--rec); }
+.tlbar { position: relative; height: 64px; border-radius: 10px; background: repeating-linear-gradient(90deg, #232636 0 2px, transparent 2px 100%) 0 0 / calc(100% / 30) 100%, #1a1d29; overflow: hidden; }
+.tlbar .kept { position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), color-mix(in srgb, var(--accent) 26%, transparent)); }
+.tlbar .trim { position: absolute; top: 4px; bottom: 4px; right: 6px; width: 10%; border-radius: 6px; border: 2px solid var(--accent2); background: color-mix(in srgb, var(--accent2) 40%, transparent); }
+.tlbar .now { position: absolute; top: 0; bottom: 0; right: 0; width: 3px; background: var(--rec); }
 .tl-labels { display: flex; justify-content: space-between; margin-top: 10px; font: 500 13px/1 var(--mono); color: var(--dim); font-variant-numeric: tabular-nums; }
 .tl-labels .hl { color: var(--fg); }
+.tl-key { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: 14px; color: var(--dim); }
+.tl-key i { display: inline-block; width: 18px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.tl-key .k1 { background: color-mix(in srgb, var(--accent) 26%, transparent); } .tl-key .k2 { background: color-mix(in srgb, var(--accent2) 40%, transparent); border: 1px solid var(--accent2); }
 .steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 32px; }
 .steps3 h3 { font-size: 20px; margin-bottom: 6px; }
 .steps3 p { color: var(--dim); font-size: 16px; }
 
-/* ---- features: group name on the left, what it does on the right */
-.groups { margin-top: 52px; display: grid; gap: 0; }
+.groups { margin-top: 52px; display: grid; }
 .group { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 40px; padding-block: 34px; border-top: 1px solid var(--line); }
 .group h3 { font-size: 28px; }
 .group h3 small { display: block; margin-top: 10px; font: 500 15px/1.5 var(--body); color: var(--dim); letter-spacing: 0; }
+.try { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 9px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: color-mix(in srgb, var(--accent) 12%, transparent); font-weight: 600; font-size: 14px; cursor: pointer; }
+.try:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .group ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px; }
 .group li { min-width: 0; color: var(--dim); font-size: 16px; }
 .group li b { display: block; color: var(--fg); font-weight: 600; margin-bottom: 2px; }
 
-/* ---- light on your PC */
 .light { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
 .figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 36px; }
 .fig { background: var(--panel); padding: 22px; }
@@ -159,12 +297,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .legend { display: flex; gap: 16px; margin-top: 18px; font-size: 13px; color: var(--dim); }
 .legend i { display: inline-block; width: 18px; height: 8px; border-radius: 4px; margin-right: 6px; vertical-align: middle; }
 
-/* ---- hotkeys */
 .keys { margin-top: 36px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; }
 .keys div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 13px; border-bottom: 1px solid var(--line); font-size: 16px; }
-.keys div span:first-child { min-width: 0; }
 
-/* ---- install */
 .install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
 .install ol { list-style: none; counter-reset: s; margin: 32px 0 0; padding: 0; display: grid; gap: 22px; }
 .install li { counter-increment: s; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; }
@@ -177,15 +312,14 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .reqs div span:first-child { color: var(--dim); }
 .reqs div span:last-child { text-align: right; }
 
-/* ---- closing band and footer */
-.closer { text-align: left; padding-block: 96px; background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 60%), radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%), var(--bg); border-top: 1px solid var(--line); }
+.closer { padding-block: 96px; background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 60%), radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%), var(--bg); border-top: 1px solid var(--line); }
 .closer h2 { font-size: clamp(36px, 5.6vw, 68px); max-width: 16ch; }
 .closer .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--dim); font-size: 14px; }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; }
 footer a { color: var(--dim); }
 footer .brand { font-size: 16px; color: var(--fg); margin-right: auto; }
-footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; height: 8px; }
+footer .mark { width: 20px; height: 20px; }
 
 @media (max-width: 900px) {
   .hero-text, .light, .install { grid-template-columns: minmax(0, 1fr); gap: 28px; }
@@ -196,12 +330,9 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
 }
 @media (max-width: 600px) {
   body { font-size: 16px; }
-  .hero { padding-block: 44px 24px; }
+  .hero { padding-block: 40px 16px; }
   .section { padding-block: 64px; }
   .group ul, .keys, .figs { grid-template-columns: minmax(0, 1fr); }
-  .stage { border-radius: 12px; }
-  .ov-fps { display: none; }
-  .ov-toast { width: 44cqw; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -214,6 +345,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
   <div class="wrap">
     <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Rewynd</a>
     <nav aria-label="Sections">
+      <a href="#demo">Try it</a>
       <a href="#how">Instant replay</a>
       <a href="#features">Features</a>
       <a href="#light">Light on your PC</a>
@@ -229,37 +361,141 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
       <div class="hero-text">
         <h1>That was sick.<br><em>Clip it.</em></h1>
         <div>
-          <p class="lede">Rewynd keeps the last moments of your game. Press <span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span> and they're saved, ready to trim, share with friends or post.</p>
+          <p class="lede">Rewynd keeps the last moments of your game. Press <span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span> and they're saved, ready to trim, share with friends or post. Try it below: the game is live.</p>
           <div class="cta">
             <a class="btn go" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Download for Windows
             </a>
-            <a class="btn" href="https://github.com/aadomy21/Rewynd#readme">Watch the demo</a>
+            <a class="btn" href="https://github.com/aadomy21/Rewynd#readme">Watch the demo video</a>
           </div>
           <p class="fine">Free · Windows 10 and 11, 64-bit · Version 1.4.9</p>
         </div>
       </div>
 
-      <div class="stage" id="stage" aria-label="Rewynd's overlay on top of a game: the top bar, an FPS counter and the Clip saved pop-up">
-        <canvas id="game" aria-hidden="true"></canvas>
-        <div class="ov ov-fps" aria-hidden="true"><span class="n" id="fps">144</span> FPS<small>CPU 14% · GPU 61%</small></div>
-        <div class="ov ov-bar" aria-hidden="true">
-          <span class="rec"><i></i>Replay on · last 5:00</span>
-          <span class="sep"></span>
-          <span class="ic"><b class="on">C</b><b>G</b><b>L</b><b>V</b></span>
-          <span class="sep"></span>
-          <span class="bat"><span></span>78%</span>
-          <span id="clock">9:41 PM</span>
+      <!-- ================================================= the playable demo -->
+      <div class="demo" id="demo">
+        <div class="stage" id="stage" aria-label="A small game running with Rewynd on top. Save clips, open the overlay and use the widgets.">
+          <canvas class="game" id="game" aria-hidden="true"></canvas>
+          <div class="pills">
+            <span class="pill" id="pillReplay"><i></i><span id="replayTxt">Replay · 0:00</span><span class="buf"><b id="bufBar"></b></span></span>
+            <span class="pill rec" id="pillRec" hidden><i></i><span id="recTxt">REC 0:00</span></span>
+          </div>
+          <button class="hint" id="hint" type="button"></button>
+          <div class="overlay" id="overlay" hidden>
+            <div class="ov-dim" id="ovDim"></div>
+            <div class="tb" id="tb">
+              <span class="mark" aria-hidden="true"></span>
+              <span class="rs"><i></i><span id="tbReplay">Replay on</span></span>
+              <span class="sep"></span>
+              <button type="button" data-w="capture" title="Capture" aria-label="Capture"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></button>
+              <button type="button" data-w="gallery" title="Gallery" aria-label="Gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 4 4 3-3 6 6"/></svg></button>
+              <button type="button" data-w="voice" title="Voice" aria-label="Voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+              <button type="button" data-w="perf" title="Performance" aria-label="Performance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 4 4-7 5 6"/></svg></button>
+              <button type="button" data-w="lobby" title="Lobby" aria-label="Lobby"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="3.5"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 15.5c3 0 6 1.5 6 4.5"/></svg></button>
+              <button type="button" data-w="themes" title="Themes" aria-label="Themes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-1.3-1-1.7-1-2.9 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7" r="1.2" fill="currentColor"/><circle cx="15" cy="7" r="1.2" fill="currentColor"/></svg></button>
+              <span class="sep"></span>
+              <span class="clock" id="tbClock">9:41 PM</span>
+              <button type="button" id="ovClose" title="Close overlay (Z)" aria-label="Close overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            </div>
+
+            <section class="w" data-w="capture">
+              <header><h4>Capture</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Capture">×</button></header>
+              <div class="body">
+                <button class="bigclip" type="button" id="wClip"><span>Save clip</span><small>The last 8 seconds · key C</small></button>
+                <div class="duo"><button type="button" class="chip" id="wShot">Screenshot</button><button type="button" class="chip" id="wRec">Record</button></div>
+                <label class="sw"><input type="checkbox" id="wReplay" checked><span></span>Instant replay<em id="wReplayNote">8 s here, 5 min in the app</em></label>
+                <label class="sw"><input type="checkbox" id="wAuto" checked><span></span>Auto clips<em>triple kills</em></label>
+              </div>
+            </section>
+
+            <section class="w" data-w="gallery">
+              <header><h4>Gallery</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Gallery">×</button></header>
+              <div class="body"><div id="gal"></div></div>
+            </section>
+
+            <section class="w" data-w="voice">
+              <header><h4>Voice</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Voice">×</button></header>
+              <div class="body">
+                <span class="lbl">Soundboard</span>
+                <div class="pads" id="pads"></div>
+                <span class="lbl">Say it</span>
+                <div class="tts">
+                  <input id="ttsText" value="gg, that was clean" aria-label="Text to say" maxlength="120">
+                  <select id="ttsVoice" aria-label="Voice">
+                    <option value="normal">Normal</option>
+                    <option value="chip">Chipmunk</option>
+                    <option value="deep">Deep</option>
+                    <option value="robot">Robot</option>
+                  </select>
+                  <button type="button" class="chip go" id="ttsGo">Say it</button>
+                </div>
+                <p class="note" id="ttsNote">In Rewynd this goes into your mic, so Discord and games hear it.</p>
+              </div>
+            </section>
+
+            <section class="w perf" data-w="perf">
+              <header><h4>Performance</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Performance">×</button></header>
+              <div class="body">
+                <canvas id="perfCv" width="520" height="144"></canvas>
+                <div class="stats">
+                  <div><b id="pFps">60</b><span>FPS</span></div>
+                  <div><b id="pCpu">41%</b><span>CPU</span></div>
+                  <div><b id="pGpu">58%</b><span>GPU</span></div>
+                  <div><b id="pSelf" style="color:var(--ok)">1.0%</b><span>Rewynd</span></div>
+                </div>
+                <p class="note">Top line: your whole PC. Green, along the bottom: Rewynd.</p>
+              </div>
+            </section>
+
+            <section class="w" data-w="lobby">
+              <header><h4>Lobby</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Lobby">×</button></header>
+              <div class="body" id="feed"></div>
+            </section>
+
+            <section class="w" data-w="themes">
+              <header><h4>Themes</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Themes">×</button></header>
+              <div class="body">
+                <div class="swatches" id="swatches"></div>
+                <p class="note">Changes this whole page, the way it changes the whole app.</p>
+              </div>
+            </section>
+          </div>
+
+          <div class="editor" id="editor" hidden>
+            <div class="ed" role="dialog" aria-label="Quick trim">
+              <header><h4 id="edTitle">Quick trim</h4><span id="edSub"></span><button type="button" id="edX" aria-label="Close">×</button></header>
+              <div class="in">
+                <canvas class="view" id="edView" width="768" height="432"></canvas>
+                <div class="tl" id="edTl">
+                  <canvas id="edStrip" width="1200" height="100"></canvas>
+                  <div class="sel" id="edSel"></div>
+                  <div class="head" id="edHead"></div>
+                  <input type="range" id="edA" min="0" max="1000" value="0" aria-label="Clip start">
+                  <input type="range" id="edB" min="0" max="1000" value="1000" aria-label="Clip end">
+                </div>
+                <div class="row">
+                  <span class="time" id="edTime"></span>
+                  <button type="button" class="chip" id="edPlay">Pause</button>
+                  <button type="button" class="chip" id="edDiscord">Fit for Discord</button>
+                  <button type="button" class="chip go" id="edSave">Save trim</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toasts" id="toasts" aria-live="polite"></div>
+          <div class="flash" id="flash"></div>
         </div>
-        <div class="ov ov-toast pop" id="toast" aria-hidden="true">
-          <div class="t"><i></i>Clip saved</div>
-          <div class="s" id="toastSub">Last 5 minutes · trim it to the best part</div>
-          <div class="strip"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="sel"></div></div>
-          <div class="row"><b>Trim</b><b>Fit for Discord</b><b class="a">Post</b></div>
+
+        <div class="controls">
+          <button type="button" class="ctl primary" id="cClip"><kbd class="k">C</kbd>Save a clip</button>
+          <button type="button" class="ctl" id="cOverlay"><kbd class="k">Z</kbd>Open the overlay</button>
+          <button type="button" class="ctl" id="cShot"><kbd class="k">S</kbd>Screenshot</button>
+          <button type="button" class="ctl" id="cSound" aria-pressed="true">Sound on</button>
+          <p class="say">Click the game to shoot. On this page the keys are C and Z; in the app they're Alt+C and Alt+Z.</p>
         </div>
       </div>
-      <p class="stage-note">Try it: press <span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span> on this page, or <button type="button" id="clipBtn">save a clip</button></p>
     </div>
   </section>
 
@@ -267,9 +503,9 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
     <div class="wrap section">
       <p class="eyebrow">Instant replay</p>
       <h2 style="margin-top:14px">It's already recording. You decide what to keep.</h2>
-      <p class="intro">While you play, Rewynd quietly keeps the last 5 minutes and lets older footage go, so nothing piles up on your drive. When something happens, you save it after the fact, then trim it to the moment.</p>
+      <p class="intro">While you play, Rewynd quietly keeps the last 5 minutes and lets older footage go, so nothing piles up on your drive. When something happens, you save it after the fact, then trim it to the moment. The demo above does the same with 8 seconds.</p>
       <div class="buffer">
-        <div class="tl" role="img" aria-label="The last five minutes are kept and saved; you trim the clip to the best 30 seconds">
+        <div class="tlbar" role="img" aria-label="The last five minutes are kept and saved; you trim the clip to the best 30 seconds">
           <div class="kept"></div><div class="trim"></div><div class="now"></div>
         </div>
         <div class="tl-labels"><span>−5:00</span><span>−4:00</span><span>−3:00</span><span>−2:00</span><span>−1:00</span><span class="hl">now</span></div>
@@ -290,7 +526,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
       <p class="intro">Press <span class="key"><kbd>Alt</kbd>+<kbd>Z</kbd></span> over any game and it's all there, in widgets you can move, resize and snap together.</p>
       <div class="groups">
         <div class="group">
-          <h3>Capture<small>Full screen, one app, or an area you drag.</small></h3>
+          <div><h3>Capture<small>Full screen, one app, or an area you drag.</small></h3><button type="button" class="try" data-try="capture">Try Capture in the demo ↑</button></div>
           <ul>
             <li><b>Up to 4K, or up to 144 fps</b>Each sound on its own track: game, everything else, and your mic.</li>
             <li><b>Screenshots</b>Of the whole screen or an area, copied so you can paste them anywhere.</li>
@@ -299,7 +535,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
           </ul>
         </div>
         <div class="group">
-          <h3>Edit<small>Quick fixes or a full studio.</small></h3>
+          <div><h3>Edit<small>Quick fixes or a full studio.</small></h3><button type="button" class="try" data-try="edit">Trim a clip in the demo ↑</button></div>
           <ul>
             <li><b>Editor and Studio</b>Trim, crop, text, music, stickers, keyframes and GIFs.</li>
             <li><b>Make it vertical</b>For TikTok, Shorts and Reels, with your facecam in a box on top.</li>
@@ -308,7 +544,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
           </ul>
         </div>
         <div class="group">
-          <h3>Share<small>With friends first.</small></h3>
+          <div><h3>Share<small>With friends first.</small></h3><button type="button" class="try" data-try="lobby">Open the Lobby in the demo ↑</button></div>
           <ul>
             <li><b>The Lobby</b>A feed for you and your friends: likes, reactions, comments with timestamps, @tags and Clip of the Week.</li>
             <li><b>Fit for Discord</b>Shrinks a clip under the upload limit and copies it, ready to paste.</li>
@@ -317,7 +553,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
           </ul>
         </div>
         <div class="group">
-          <h3>Live<small>Stream without another app.</small></h3>
+          <div><h3>Live<small>Stream without another app.</small></h3></div>
           <ul>
             <li><b>YouTube or any RTMP server</b>Use your own stream key, the way OBS does.</li>
             <li><b>Live in the Lobby</b>Stream inside Rewynd for your friends, people you tag, or everyone.</li>
@@ -326,7 +562,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
           </ul>
         </div>
         <div class="group">
-          <h3>Voice<small>What your friends hear.</small></h3>
+          <div><h3>Voice<small>What your friends hear.</small></h3><button type="button" class="try" data-try="voice">Play the soundboard ↑</button></div>
           <ul>
             <li><b>Voice changer</b>24 voices, plus your own made in Voicelab.</li>
             <li><b>Soundboard</b>Starter sounds, your own files, or the last 10 seconds you heard.</li>
@@ -335,7 +571,7 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
           </ul>
         </div>
         <div class="group">
-          <h3>Make it yours<small>Your layout, your look.</small></h3>
+          <div><h3>Make it yours<small>Your layout, your look.</small></h3><button type="button" class="try" data-try="themes">Change the theme ↑</button></div>
           <ul>
             <li><b>Themes</b>Presets, your own colors, a picture background and UI sounds, or install one from the theme market.</li>
             <li><b>Library</b>Search, filter by game, star favorites. The storage cleaner never touches starred clips.</li>
@@ -433,85 +669,551 @@ footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; he
 
 <script>
 (() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const rnd = (a, b) => a + Math.random() * (b - a);
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---- 1.4.9 against 1.4.8 (from the update log): shorter bars are better
-  const rows = [
-    ["Memory in use", 211, 140, "MB"],
-    ["Building the overlay", 1171, 402, "ms"],
-    ["Performance widget, each update", 24.9, 4.0, "ms"],
-    ["Highlight AI, each check", 8.4, 2.9, "ms"],
-    ["Stream overlays, each frame", 5.8, 2.0, "ms"],
-    ["Recorder's sound, per second", 4.8, 2.4, "ms"],
-  ];
+  // ---------------------------------------------------------------- speed chart (from the 1.4.9 update log)
+  const rows = [["Memory in use", 211, 140, "MB"], ["Building the overlay", 1171, 402, "ms"], ["Performance widget, each update", 24.9, 4.0, "ms"],
+    ["Highlight AI, each check", 8.4, 2.9, "ms"], ["Stream overlays, each frame", 5.8, 2.0, "ms"], ["Recorder's sound, per second", 4.8, 2.4, "ms"]];
   const fmt = (v, u) => (v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(1)) + " " + u;
-  document.getElementById("bars").innerHTML = rows.map(([name, was, now, u]) => {
-    const tag = u === "MB" ? `${was - now} MB less` : `${(was / now).toFixed(1)}× faster`;
-    return `<div class="bar"><div class="top"><span>${name}</span><span>${tag}</span></div>
-      <div class="track"><div class="was" style="width:100%"></div><div class="now" style="width:${(now / was * 100).toFixed(1)}%"></div></div>
-      <div class="nums"><span>${fmt(was, u)}</span><span>${fmt(now, u)}</span></div></div>`;
-  }).join("");
+  $("#bars").innerHTML = rows.map(([n, was, now, u]) => `<div class="bar"><div class="top"><span>${n}</span><span>${u === "MB" ? `${was - now} MB less` : `${(was / now).toFixed(1)}× faster`}</span></div>
+    <div class="track"><div class="was" style="width:100%"></div><div class="now" style="width:${(now / was * 100).toFixed(1)}%"></div></div>
+    <div class="nums"><span>${fmt(was, u)}</span><span>${fmt(now, u)}</span></div></div>`).join("");
 
-  // ---- the clock on the mock top bar shows the visitor's time
-  const clock = document.getElementById("clock");
-  const tick = () => { clock.textContent = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
-  tick(); setInterval(tick, 30000);
+  // ---------------------------------------------------------------- sound (made on the fly, nothing downloaded)
+  let AC = null, master = null, soundOn = true;
+  const ac = () => {
+    if (!AC) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); master = AC.createGain(); master.gain.value = 0.5; master.connect(AC.destination); }
+    if (AC.state === "suspended") AC.resume();
+    return AC;
+  };
+  function tone(f, at, dur, type = "sine", vol = 0.2, f2) {
+    const a = ac(); if (!a || !soundOn) return;
+    const t = a.currentTime + at, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(master); o.start(t); o.stop(t + dur + 0.05);
+    return o;
+  }
+  function noise(at, dur, vol = 0.2, hp = 0) {
+    const a = ac(); if (!a || !soundOn) return;
+    const t = a.currentTime + at, len = Math.max(1, Math.floor(a.sampleRate * dur)), b = a.createBuffer(1, len, a.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const s = a.createBufferSource(), g = a.createGain(); s.buffer = b;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    let node = s; if (hp) { const f = a.createBiquadFilter(); f.type = "highpass"; f.frequency.value = hp; s.connect(f); node = f; }
+    node.connect(g).connect(master); s.start(t);
+  }
+  const sfx = {
+    clip() { tone(880, 0, 0.12, "triangle", 0.18); tone(1320, 0.07, 0.25, "triangle", 0.16); noise(0, 0.06, 0.08, 3000); },
+    shot() { noise(0, 0.05, 0.2, 2000); noise(0.06, 0.08, 0.12, 4000); },
+    pop() { tone(660, 0, 0.1, "sine", 0.12, 990); },
+    like() { tone(1046, 0, 0.12, "sine", 0.1); tone(1568, 0.06, 0.18, "sine", 0.08); },
+  };
+  const board = [
+    ["📯", "Air horn", () => { for (const k of [0, 0.45]) for (const f of [415, 523, 622]) tone(f, k, 0.4, "sawtooth", 0.07); }],
+    ["🥁", "Ba dum tss", () => { tone(190, 0, 0.18, "sine", 0.4, 90); tone(150, 0.2, 0.18, "sine", 0.4, 70); noise(0.44, 0.9, 0.22, 6000); }],
+    ["🔔", "Ding", () => { tone(1318, 0, 1.4, "sine", 0.2); tone(2637, 0, 0.9, "sine", 0.06); }],
+    ["🌀", "Boing", () => { const o = tone(150, 0, 0.6, "triangle", 0.25); if (o) { const t = AC.currentTime; o.frequency.setValueCurveAtTime(new Float32Array([150, 520, 260, 470, 300, 420, 340]), t, 0.55); } }],
+    ["🎺", "Wrong", () => { [392, 370, 349].forEach((f, i) => tone(f, i * 0.32, 0.3, "sawtooth", 0.08)); tone(330, 0.96, 0.9, "sawtooth", 0.08, 300); }],
+    ["👏", "Applause", () => { for (let i = 0; i < 40; i++) noise(i * 0.045 + Math.random() * 0.03, 0.05, 0.08 + Math.random() * 0.06, 1500); }],
+  ];
 
-  // ---- a made-up game picture: a dusk valley with drifting light, drawn on a canvas
-  const cv = document.getElementById("game"), g = cv.getContext("2d");
-  let W = 0, H = 0, t = 0;
-  const size = () => { const r = cv.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); };
-  const ridge = (seed, y, amp, col) => {
-    g.beginPath(); g.moveTo(0, H);
-    for (let x = 0; x <= W; x += W / 120) {
-      const k = x / W;
-      g.lineTo(x, H * y - amp * H * (Math.sin(k * 7 + seed) * 0.5 + Math.sin(k * 17 + seed * 2.3) * 0.22 + Math.sin(k * 3.1 + seed * 0.7) * 0.6));
+  // ---------------------------------------------------------------- themes (the app's own presets)
+  const THEMES = [["Rewynd", [108, 123, 255], [160, 107, 255]], ["Midnight", [34, 211, 238], [59, 130, 246]], ["Crimson", [239, 68, 68], [249, 115, 22]],
+    ["Forest", [52, 211, 153], [132, 204, 22]], ["Sakura", [244, 114, 182], [192, 132, 252]], ["Ocean", [56, 189, 248], [99, 102, 241]]];
+  let ACC = THEMES[0][1];
+  const rgb = c => `rgb(${c.join(",")})`;
+  function setTheme(i) {
+    const [, a, b] = THEMES[i]; ACC = a;
+    document.documentElement.style.setProperty("--accent", rgb(a));
+    document.documentElement.style.setProperty("--accent2", rgb(b));
+    $$(".swatch").forEach((s, k) => s.classList.toggle("on", k === i));
+    glowCache = {};
+  }
+  $("#swatches").innerHTML = THEMES.map(([n, a, b], i) => `<button type="button" class="swatch${i ? "" : " on"}" data-t="${i}"><i style="background:linear-gradient(135deg,${rgb(a)},${rgb(b)})"></i>${n}</button>`).join("");
+  $("#swatches").addEventListener("click", e => { const b = e.target.closest(".swatch"); if (b) { setTheme(+b.dataset.t); sfx.pop(); } });
+
+  // ---------------------------------------------------------------- the game (a made-up arena shooter that plays itself)
+  const demo = $("#demo"), stage = $("#stage"), cv = $("#game"), ctx = cv.getContext("2d");
+  let W = 0, H = 0, U = 1, bg = null, glowCache = {};
+  const S = { t: 0, px: 0, py: 0, aim: 0, en: [], bu: [], pa: [], feed: [], kills: [], score: 0, fire: 0, spawn: 0.5, wave: 7, rapid: 0, shield: 0, banner: null, lastAuto: -99 };
+  const NAMES = ["Drone", "Scout", "Spark", "Hunter", "Wisp"];
+
+  function glow(c) {
+    if (glowCache[c]) return glowCache[c];
+    const g = document.createElement("canvas"); g.width = g.height = 64; const x = g.getContext("2d");
+    const r = x.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, c); r.addColorStop(1, "rgba(0,0,0,0)");
+    x.fillStyle = r; x.fillRect(0, 0, 64, 64); return glowCache[c] = g;
+  }
+  function edge() { const m = 30, s = Math.random() * 4 | 0; return s === 0 ? [-m, rnd(0, H)] : s === 1 ? [W + m, rnd(0, H)] : s === 2 ? [rnd(0, W), -m] : [rnd(0, W), H + m]; }
+  function spawn(x, y, big) { S.en.push({ x, y, big, r: big ? 18 : 11, hp: big ? 3 : 1, sp: big ? 50 : rnd(75, 115), rot: rnd(0, 6), spin: rnd(-3, 3), ph: rnd(0, 6), hit: 0, name: big ? "Warden" : NAMES[Math.random() * NAMES.length | 0] }); }
+  function boom(x, y, col, n) { for (let i = 0; i < (reduce ? n / 3 : n); i++) { const a = rnd(0, 6.283), v = rnd(60, 280) * U; S.pa.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rnd(0.4, 0.9), max: 0.9, col, s: rnd(1.5, 3.5) * U }); } }
+  function shoot(a) { S.bu.push({ x: S.px + Math.cos(a) * 16 * U, y: S.py + Math.sin(a) * 16 * U, vx: Math.cos(a) * 760 * U, vy: Math.sin(a) * 760 * U, life: 1.1 }); }
+  function kill(e) {
+    e.dead = true; boom(e.x, e.y, e.big ? "255,170,80" : "255,80,120", e.big ? 34 : 22);
+    S.score += e.big ? 300 : 100; S.feed.unshift({ txt: e.name, t: S.t }); S.feed.length = Math.min(S.feed.length, 4);
+    S.kills.push(S.t); S.kills = S.kills.filter(k => k > S.t - 2.6);
+    const n = S.kills.length;
+    if (n >= 3) {
+      S.banner = { txt: n >= 5 ? "RAMPAGE" : n === 4 ? "QUAD KILL" : "TRIPLE KILL", t: S.t };
+      if (autoOn && replayOn && S.t - S.lastAuto > 6) { S.lastAuto = S.t; setTimeout(() => saveClip(n >= 4 ? "Quad kill" : "Triple kill", true), 1000); }
     }
-    g.lineTo(W, H); g.closePath(); g.fillStyle = col; g.fill();
-  };
-  const motes = Array.from({ length: 46 }, (_, i) => ({ x: Math.random(), y: Math.random() * 0.7, r: 0.6 + Math.random() * 1.8, s: 0.2 + Math.random() * 0.6, p: i }));
-  const draw = () => {
-    const sky = g.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#1b1640"); sky.addColorStop(0.45, "#4b2c63"); sky.addColorStop(0.7, "#c2577a"); sky.addColorStop(1, "#f19a6b");
-    g.fillStyle = sky; g.fillRect(0, 0, W, H);
-    // the sun behind the hills
-    const sx = W * 0.62, sy = H * 0.6, sun = g.createRadialGradient(sx, sy, 0, sx, sy, H * 0.55);
-    sun.addColorStop(0, "rgba(255,214,160,.95)"); sun.addColorStop(0.12, "rgba(255,170,120,.55)"); sun.addColorStop(1, "rgba(255,120,120,0)");
-    g.fillStyle = sun; g.fillRect(0, 0, W, H);
-    ridge(1.2, 0.66, 0.10, "#6b3a6e");
-    ridge(2.6, 0.75, 0.09, "#3f2650");
-    ridge(4.1, 0.86, 0.08, "#21173a");
-    ridge(5.3, 0.97, 0.06, "#120e24");
-    // drifting light
-    for (const m of motes) {
-      const x = ((m.x + t * 0.004 * m.s) % 1) * W, y = (m.y + Math.sin(t * 0.02 + m.p) * 0.01) * H;
-      g.fillStyle = `rgba(255,225,200,${0.25 + 0.35 * Math.sin(t * 0.05 + m.p) ** 2})`;
-      g.beginPath(); g.arc(x, y, m.r * (W / 900), 0, Math.PI * 2); g.fill();
+  }
+
+  function update(dt) {
+    S.t += dt;
+    S.px = W / 2 + W * 0.2 * Math.sin(S.t * 0.37); S.py = H / 2 + H * 0.15 * Math.sin(S.t * 0.51 + 1);
+    if ((S.spawn -= dt) <= 0 && S.en.length < 9) { const [x, y] = edge(); spawn(x, y, Math.random() < 0.12); S.spawn = rnd(0.6, 1.4); }
+    if ((S.wave -= dt) <= 0) { const [x, y] = edge(); for (let i = 0; i < 4; i++) spawn(x + rnd(-50, 50) * U, y + rnd(-50, 50) * U, false); S.wave = rnd(13, 20); S.rapid = 3.2; }
+    S.rapid = Math.max(0, S.rapid - dt); S.shield = Math.max(0, S.shield - dt);
+    let best = null, bd = 1e9;
+    for (const e of S.en) {
+      const dx = S.px - e.x, dy = S.py - e.y, d = Math.hypot(dx, dy) || 1;
+      const wob = Math.sin(S.t * 2 + e.ph) * 30 * U;
+      e.x += (dx / d * e.sp * U + (-dy / d) * wob * 0.6) * dt; e.y += (dy / d * e.sp * U + (dx / d) * wob * 0.6) * dt;
+      e.rot += e.spin * dt; e.hit -= dt;
+      if (d < (e.r + 14) * U) { e.dead = true; boom(e.x, e.y, "255,80,120", 16); S.shield = 0.5; }
+      const inside = e.x > 0 && e.x < W && e.y > 0 && e.y < H;
+      if (inside && d < bd) { bd = d; best = e; }
     }
-    // a crosshair, so it reads as a game
-    const cx = W / 2, cy = H / 2, u = W / 260;
-    g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = Math.max(1, u * 0.45);
-    g.beginPath(); g.moveTo(cx - 3 * u, cy); g.lineTo(cx - 1.2 * u, cy); g.moveTo(cx + 1.2 * u, cy); g.lineTo(cx + 3 * u, cy);
-    g.moveTo(cx, cy - 3 * u); g.lineTo(cx, cy - 1.2 * u); g.moveTo(cx, cy + 1.2 * u); g.lineTo(cx, cy + 3 * u); g.stroke();
-  };
-  const loop = () => { t++; draw(); if (!reduce) requestAnimationFrame(loop); };
-  size(); loop();
-  new ResizeObserver(() => { size(); draw(); }).observe(cv);
+    if (best) {
+      const ta = Math.atan2(best.y - S.py, best.x - S.px); let da = ((ta - S.aim + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      S.aim += da * Math.min(1, dt * 14);
+      if ((S.fire -= dt) <= 0 && Math.abs(da) < 0.35) { shoot(S.aim); S.fire = S.rapid > 0 ? 0.1 : 0.32; }
+    }
+    for (const b of S.bu) {
+      b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt;
+      for (const e of S.en) if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < (e.r + 3) * U) { b.life = 0; e.hp--; e.hit = 0.08; boom(b.x, b.y, "200,210,255", 4); if (e.hp <= 0) kill(e); break; }
+    }
+    for (const p of S.pa) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.94; p.vy *= 0.94; p.life -= dt; }
+    S.en = S.en.filter(e => !e.dead); S.bu = S.bu.filter(b => b.life > 0); S.pa = S.pa.filter(p => p.life > 0);
+    S.feed = S.feed.filter(f => S.t - f.t < 4.5);
+  }
 
-  // ---- the FPS counter wanders a little
-  const fps = document.getElementById("fps");
-  if (!reduce) setInterval(() => { fps.textContent = 141 + Math.round(Math.random() * 3); }, 900);
+  function draw() {
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    // floor grid, drifting
+    const g = 46 * U, ox = (S.t * 9 * U) % g, oy = (S.t * 5 * U) % g;
+    ctx.beginPath();
+    for (let x = -ox; x < W; x += g) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
+    for (let y = -oy; y < H; y += g) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+    ctx.strokeStyle = "rgba(130,150,255,.06)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(W / 2, H / 2, Math.min(W, H) * 0.44, 0, 6.283); ctx.strokeStyle = "rgba(130,150,255,.1)"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.globalCompositeOperation = "lighter";
+    for (const p of S.pa) { ctx.fillStyle = `rgba(${p.col},${clamp(p.life / p.max, 0, 1)})`; ctx.fillRect(p.x - p.s / 2, p.y - p.s / 2, p.s, p.s); }
+    const bglow = glow(`rgba(${ACC.join(",")},.6)`);
+    for (const b of S.bu) { ctx.drawImage(bglow, b.x - 9 * U, b.y - 9 * U, 18 * U, 18 * U); }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.lineCap = "round"; ctx.lineWidth = 2.6 * U; ctx.strokeStyle = "rgba(225,230,255,.95)";
+    ctx.beginPath(); for (const b of S.bu) { ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - b.vx * 0.018, b.y - b.vy * 0.018); } ctx.stroke();
+    for (const e of S.en) {
+      const r = e.r * U;
+      ctx.globalCompositeOperation = "lighter"; ctx.drawImage(glow(e.big ? "rgba(255,160,60,.45)" : "rgba(255,60,110,.45)"), e.x - r * 2.4, e.y - r * 2.4, r * 4.8, r * 4.8); ctx.globalCompositeOperation = "source-over";
+      ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(e.rot);
+      ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r, 0); ctx.lineTo(0, r); ctx.lineTo(-r, 0); ctx.closePath();
+      ctx.fillStyle = e.hit > 0 ? "#fff" : e.big ? "#ff9a3d" : "#ff4d6d"; ctx.fill();
+      ctx.scale(0.42, 0.42); ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r, 0); ctx.lineTo(0, r); ctx.lineTo(-r, 0); ctx.closePath(); ctx.fillStyle = "#2a0f1c"; ctx.fill();
+      ctx.restore();
+    }
+    // the player's ship
+    ctx.globalCompositeOperation = "lighter"; ctx.drawImage(glow(`rgba(${ACC.join(",")},.55)`), S.px - 46 * U, S.py - 46 * U, 92 * U, 92 * U); ctx.globalCompositeOperation = "source-over";
+    ctx.save(); ctx.translate(S.px, S.py); ctx.rotate(S.aim); ctx.scale(U, U);
+    ctx.beginPath(); ctx.moveTo(-9, -5); ctx.lineTo(-17 - Math.random() * 8, 0); ctx.lineTo(-9, 5); ctx.fillStyle = "#ffb35c"; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-11, -11); ctx.lineTo(-6, 0); ctx.lineTo(-11, 11); ctx.closePath();
+    ctx.fillStyle = "#eef0ff"; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = rgb(ACC); ctx.stroke();
+    ctx.restore();
+    if (S.shield > 0) { ctx.beginPath(); ctx.arc(S.px, S.py, 26 * U, 0, 6.283); ctx.strokeStyle = `rgba(${ACC.join(",")},${S.shield * 2})`; ctx.lineWidth = 3 * U; ctx.stroke(); }
+    // HUD
+    ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    ctx.font = `700 ${13 * U}px "JetBrains Mono", Consolas, monospace`; ctx.fillStyle = "rgba(236,237,243,.85)";
+    ctx.fillText("SCORE " + S.score.toLocaleString("en-US"), 16 * U, H - 18 * U);
+    ctx.textAlign = "right"; ctx.font = `600 ${12 * U}px "Figtree", "Segoe UI", sans-serif`;
+    S.feed.forEach((f, i) => {
+      const a = clamp((4.5 - (S.t - f.t)) / 0.6, 0, 1), y = 22 * U + i * 26 * U, txt = `YOU  ▸  ${f.txt}`, w = ctx.measureText(txt).width + 20 * U;
+      ctx.globalAlpha = a; ctx.fillStyle = "rgba(10,11,18,.6)"; ctx.fillRect(W - 14 * U - w, y - 15 * U, w, 21 * U);
+      ctx.fillStyle = "#fff"; ctx.fillText(txt, W - 24 * U, y); ctx.globalAlpha = 1;
+    });
+    if (S.banner && S.t - S.banner.t < 1.7) {
+      const age = S.t - S.banner.t, a = 1 - Math.pow(age / 1.7, 3), sc = 1 + Math.max(0, 0.25 - age) * 1.6;
+      ctx.save(); ctx.translate(W / 2, H * 0.27); ctx.scale(sc, sc); ctx.globalAlpha = a; ctx.textAlign = "center";
+      ctx.font = `700 ${30 * U}px "Chakra Petch", "Segoe UI", sans-serif`;
+      ctx.fillStyle = "rgba(0,0,0,.5)"; ctx.fillText(S.banner.txt, 2 * U, 2 * U); ctx.fillStyle = "#fff"; ctx.fillText(S.banner.txt, 0, 0);
+      ctx.restore();
+    }
+  }
 
-  // ---- "save a clip": Alt+C on the page, or the button, plays the pop-up again
-  const toast = document.getElementById("toast"), sub = document.getElementById("toastSub");
-  let n = 1;
-  const clip = () => {
-    n++;
-    sub.textContent = `Clip ${n} today · trim it to the best part`;
-    toast.classList.remove("pop"); void toast.offsetWidth; toast.classList.add("pop");
-  };
-  document.getElementById("clipBtn").addEventListener("click", clip);
-  addEventListener("keydown", e => { if (e.altKey && (e.key === "c" || e.key === "C")) { e.preventDefault(); clip(); } });
+  stage.addEventListener("pointerdown", e => {
+    if (e.target !== cv) return;
+    const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    S.aim = Math.atan2(y - S.py, x - S.px); shoot(S.aim); shoot(S.aim + 0.05); S.fire = 0.25;
+  });
+
+  // ---------------------------------------------------------------- the replay buffer: small frames of the last 8 seconds
+  const CAP_FPS = 12, SECS = 8, MAX = CAP_FPS * SECS;
+  let lastFrame = null, ring = [], rec = null, replayOn = true, autoOn = true, SW = 256, SH = 144;
+  function capture() {
+    const c = document.createElement("canvas"); c.width = SW; c.height = SH;
+    c.getContext("2d").drawImage(cv, 0, 0, SW, SH); lastFrame = c;
+    if (replayOn) { ring.push(c); if (ring.length > MAX) ring.shift(); }
+    if (rec) { rec.frames.push(c); if (rec.frames.length >= CAP_FPS * 15) toggleRec(); }
+    tickAnims();
+  }
+  function updatePills() {
+    const s = replayOn ? ring.length / CAP_FPS : 0;
+    $("#replayTxt").textContent = replayOn ? `Replay · 0:0${Math.floor(s)}` : "Replay off";
+    $("#pillReplay").classList.toggle("off", !replayOn);
+    $("#bufBar").style.width = (s / SECS * 100) + "%";
+    $("#tbReplay").textContent = replayOn ? `Replay on · last 0:0${Math.floor(s)}` : "Replay off";
+    if (rec) $("#recTxt").textContent = `REC 0:${String(Math.floor(rec.frames.length / CAP_FPS)).padStart(2, "0")}`;
+  }
+
+  // draws a frame to fill a box, cropping what sticks out
+  function cover(x, img, w, h, dx = 0, dy = 0) {
+    const s = Math.max(w / img.width, h / img.height), sw = w / s, sh = h / s;
+    x.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, dx, dy, w, h);
+  }
+  const anims = new Set();   // little canvases that play a clip on loop
+  function tickAnims() {
+    for (const a of anims) {
+      if (!a.cv.isConnected) { anims.delete(a); continue; }
+      if (a.hoverOnly && !a.hover) continue;
+      a.i = (a.i + 1) % a.frames.length;
+      cover(a.cv.getContext("2d"), a.frames[a.i], a.cv.width, a.cv.height);
+    }
+  }
+
+  // ---------------------------------------------------------------- clips
+  const clips = []; let clipN = 0;
+  const dur = c => (c.frames.length / CAP_FPS * (c.b - c.a)).toFixed(1) + " s";
+  function flash() { if (reduce) return; const f = $("#flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go"); }
+
+  function saveClip(label = "Clip", auto = false) {
+    if (!replayOn) { toast({ title: "Instant replay is off", sub: "Turn it on in Capture, then press C again.", kind: "warn" }); return; }
+    if (ring.length < CAP_FPS) { toast({ title: "Play a second first", sub: "There's nothing to save yet.", kind: "warn" }); return; }
+    const c = { id: ++clipN, label, auto, frames: ring.slice(), a: 0, b: 1, likes: 0, posted: false };
+    clips.unshift(c); if (clips.length > 9) clips.pop();
+    flash(); sfx.clip(); clipToast(c); renderGallery(); progress("clipped");
+    return c;
+  }
+  function screenshot() {
+    if (!lastFrame) return;
+    const c = { id: ++clipN, label: "Screenshot", shot: true, frames: [lastFrame], a: 0, b: 1 };
+    clips.unshift(c); if (clips.length > 9) clips.pop();
+    flash(); sfx.shot(); renderGallery();
+    toast({ title: "Screenshot saved", sub: "Copied too, so you can paste it anywhere." });
+  }
+  function toggleRec() {
+    const b = $("#wRec");
+    if (!rec) { rec = { frames: [] }; b.textContent = "Stop"; b.classList.add("rec"); $("#pillRec").hidden = false; sfx.pop(); return; }
+    const frames = rec.frames; rec = null; b.textContent = "Record"; b.classList.remove("rec"); $("#pillRec").hidden = true;
+    if (frames.length < 6) return;
+    const c = { id: ++clipN, label: "Recording", frames, a: 0, b: 1, likes: 0, posted: false };
+    clips.unshift(c); if (clips.length > 9) clips.pop(); renderGallery(); sfx.clip(); clipToast(c, "Recording saved");
+  }
+
+  // ---------------------------------------------------------------- toasts
+  function toast({ title, sub, kind = "", el = null, ms = 4500 }) {
+    const box = $("#toasts");
+    const t = el || document.createElement("div");
+    if (!el) { t.className = "toast"; t.innerHTML = `<div class="t"><i class="${kind}"></i></div><div class="s"></div>`; t.querySelector(".t").append(title); t.querySelector(".s").textContent = sub; }
+    box.prepend(t);
+    while (box.children.length > 3) box.lastElementChild.remove();
+    let timer;
+    const go = () => { t.classList.add("out"); setTimeout(() => t.remove(), 300); };
+    const arm = d => { clearTimeout(timer); timer = setTimeout(go, d); };
+    t.addEventListener("mouseenter", () => clearTimeout(timer)); t.addEventListener("mouseleave", () => arm(2500));
+    t.addEventListener("focusin", () => clearTimeout(timer));
+    arm(ms); return t;
+  }
+  function clipToast(c, title) {
+    const t = document.createElement("div"); t.className = "toast";
+    t.innerHTML = `<div class="t"><i class="${c.auto ? "auto" : ""}"></i><span></span></div><div class="s">${dur(c)} · trim it to the best part</div>
+      <canvas class="strip" width="600" height="80"></canvas>
+      <div class="row"><button type="button" data-a="trim">Trim</button><button type="button" data-a="discord">Fit for Discord</button><button type="button" class="go" data-a="post">Post</button></div>`;
+    t.querySelector(".t span").textContent = title || (c.auto ? `Auto clip · ${c.label}` : "Clip saved");
+    strip(t.querySelector("canvas"), c.frames);
+    t.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      if (b.dataset.a === "trim") openEditor(c);
+      if (b.dataset.a === "discord") discord(b);
+      if (b.dataset.a === "post") { postClip(c); b.textContent = "Posted"; b.className = "done"; }
+    });
+    toast({ el: t, ms: 7000 });
+  }
+  function strip(canvas, frames) {
+    const x = canvas.getContext("2d"), n = 8, w = canvas.width / n;
+    for (let i = 0; i < n; i++) cover(x, frames[Math.floor(i / n * frames.length)], w - 2, canvas.height, i * w, 0);
+  }
+  function discord(b) {
+    if (b.dataset.busy) return; b.dataset.busy = 1;
+    let p = 0; const iv = setInterval(() => {
+      p = Math.min(100, p + rnd(9, 22)); b.textContent = `Shrinking ${Math.round(p)}%`;
+      if (p >= 100) { clearInterval(iv); b.textContent = "Copied · paste it"; b.className = b.className.includes("chip") ? "chip done" : "done"; sfx.pop(); }
+    }, 140);
+  }
+
+  // ---------------------------------------------------------------- the overlay and its widgets
+  const overlay = $("#overlay");
+  let Z = 20;
+  const narrow = () => demo.clientWidth < 900;
+  const shown = new Set(["capture", "gallery", "perf", "voice"]);
+  function layout(name, el) {
+    if (narrow() || el.dataset.moved) return;
+    const m = Math.max(14, W * 0.02), gx = m + 266, gw = Math.max(240, Math.min(400, W - m * 2 - 266 - 316));
+    // stack under the widget above it (by its real height) unless that one was moved or is closed
+    const below = k => { const o = $(`.w[data-w="${k}"]`); return o.hidden || o.dataset.moved ? 64 : 64 + o.offsetHeight + 12; };
+    const L = { capture: [m, 64, 250], gallery: [gx, 64, gw], voice: [W - m - 300, 64, 300], perf: [m, below("capture"), 250], lobby: [W - m - 300, 64, 300], themes: [gx, below("gallery"), gw] }[name];
+    el.style.left = L[0] + "px"; el.style.top = L[1] + "px"; el.style.width = L[2] + "px";
+    el.style.maxHeight = (H - L[1] - 14) + "px";
+  }
+  function showWidget(name, on = true) {
+    const el = $(`.w[data-w="${name}"]`);
+    if (on) { shown.add(name); el.hidden = false; el.style.zIndex = ++Z; layout(name, el); if (name === "lobby") { const v = $('.w[data-w="voice"]'); if (!v.hidden && !v.dataset.moved && !narrow()) { v.hidden = true; shown.delete("voice"); } } }
+    else { shown.delete(name); el.hidden = true; }
+    $$(".tb button[data-w]").forEach(b => b.classList.toggle("on", shown.has(b.dataset.w)));
+    if (on && narrow()) el.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+  }
+  function openOverlay(open = overlay.hidden) {
+    overlay.hidden = !open;
+    if (open && !narrow() && shown.has("lobby")) shown.delete("voice");   // they share a spot
+    if (open) { $$(".w").forEach(w => { w.hidden = !shown.has(w.dataset.w); if (!w.hidden) layout(w.dataset.w, w); }); $$(".tb button[data-w]").forEach(b => b.classList.toggle("on", shown.has(b.dataset.w))); renderGallery(); renderFeed(); progress("overlay"); sfx.pop(); }
+    $("#cOverlay").lastChild.textContent = open ? "Close the overlay" : "Open the overlay";
+  }
+  $("#tb").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) showWidget(b.dataset.w, !shown.has(b.dataset.w)); });
+  $("#ovClose").addEventListener("click", () => openOverlay(false));
+  $("#ovDim").addEventListener("click", () => openOverlay(false));
+  overlay.addEventListener("click", e => { const x = e.target.closest(".wx"); if (x) showWidget(x.closest(".w").dataset.w, false); });
+
+  // dragging widgets by their title bar
+  overlay.addEventListener("pointerdown", e => {
+    const w = e.target.closest(".w"); if (!w) return;
+    w.style.zIndex = ++Z;
+    const h = e.target.closest(".w header");
+    if (!h || e.target.closest("button") || narrow()) return;
+    e.preventDefault();
+    const sx = e.clientX, sy = e.clientY, ox = w.offsetLeft, oy = w.offsetTop;
+    h.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      const x = clamp(ox + ev.clientX - sx, 0, W - w.offsetWidth), y = clamp(oy + ev.clientY - sy, 56, H - 44);
+      w.style.left = x + "px"; w.style.top = y + "px"; w.style.maxHeight = (H - y - 10) + "px"; w.dataset.moved = 1;
+    };
+    const up = () => { h.removeEventListener("pointermove", mv); h.removeEventListener("pointerup", up); h.removeEventListener("pointercancel", up); };
+    h.addEventListener("pointermove", mv); h.addEventListener("pointerup", up); h.addEventListener("pointercancel", up);
+  });
+
+  // Capture widget
+  $("#wClip").addEventListener("click", () => saveClip());
+  $("#wShot").addEventListener("click", screenshot);
+  $("#wRec").addEventListener("click", toggleRec);
+  $("#wReplay").addEventListener("change", e => { replayOn = e.target.checked; if (!replayOn) ring = []; updatePills(); toast({ title: replayOn ? "Instant replay is on" : "Instant replay is off", sub: replayOn ? "Keeping the last 8 seconds. Press C to save them." : "Nothing is being kept now.", kind: replayOn ? "" : "warn", ms: 3000 }); });
+  $("#wAuto").addEventListener("change", e => { autoOn = e.target.checked; });
+
+  // Gallery widget
+  function renderGallery() {
+    const g = $("#gal");
+    if (!clips.length) { g.innerHTML = `<div class="empty"><b style="color:var(--fg)">No clips yet</b>Press C after something good happens.</div>`; return; }
+    g.className = "gal"; g.innerHTML = "";
+    for (const c of clips) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "tile"; b.title = c.shot ? "Screenshot" : "Open in quick trim";
+      b.innerHTML = `<canvas width="208" height="117"></canvas><span>${c.shot ? "PNG" : dur(c)}</span>${c.auto ? "<b>AUTO</b>" : ""}`;
+      const cvs = b.querySelector("canvas"); cover(cvs.getContext("2d"), c.frames[Math.floor(c.frames.length * (c.a + c.b) / 2)] || c.frames[0], cvs.width, cvs.height);
+      if (!c.shot) { const a = { cv: cvs, frames: c.frames.slice(Math.floor(c.a * c.frames.length), Math.ceil(c.b * c.frames.length)), i: 0, hoverOnly: true, hover: false }; anims.add(a); b.onmouseenter = () => a.hover = true; b.onmouseleave = () => a.hover = false; }
+      b.onclick = () => openEditor(c);
+      g.append(b);
+    }
+  }
+
+  // Voice widget
+  $("#pads").innerHTML = board.map(([i, n], k) => `<button type="button" class="pad" data-p="${k}"><small aria-hidden="true">${i}</small>${n}</button>`).join("");
+  $("#pads").addEventListener("click", e => { const b = e.target.closest(".pad"); if (!b) return; board[+b.dataset.p][2](); b.classList.add("hit"); setTimeout(() => b.classList.remove("hit"), 150); });
+  const TTS = { normal: [1, 1], chip: [2, 1.3], deep: [0.1, 0.8], robot: [0.5, 0.75] };
+  $("#ttsGo").addEventListener("click", () => {
+    const say = window.speechSynthesis;
+    if (!say) { $("#ttsNote").textContent = "This browser can't speak, but Rewynd can."; return; }
+    say.cancel(); const u = new SpeechSynthesisUtterance($("#ttsText").value || "gg");
+    [u.pitch, u.rate] = TTS[$("#ttsVoice").value]; u.volume = soundOn ? 1 : 0; say.speak(u);
+  });
+  $("#ttsText").addEventListener("keydown", e => { if (e.key === "Enter") $("#ttsGo").click(); });
+
+  // Performance widget (the game's FPS is real; the rest follows a typical gaming PC)
+  const perf = { cpu: [], self: [] }, pcv = $("#perfCv"), px = pcv.getContext("2d");
+  let fpsN = 0, fpsT = 0, FPS = 60;
+  function perfTick() {
+    const cpu = clamp(38 + Math.sin(S.t * 0.7) * 8 + rnd(-4, 4) + (S.rapid > 0 ? 9 : 0), 5, 95), self = rnd(0.7, 1.3) + (rec ? 0.4 : 0);
+    perf.cpu.push(cpu); perf.self.push(self); if (perf.cpu.length > 60) { perf.cpu.shift(); perf.self.shift(); }
+    if (overlay.hidden || !shown.has("perf")) return;
+    $("#pFps").textContent = Math.round(FPS); $("#pCpu").textContent = Math.round(cpu) + "%"; $("#pGpu").textContent = Math.round(clamp(52 + rnd(-6, 9), 0, 99)) + "%"; $("#pSelf").textContent = self.toFixed(1) + "%";
+    const w = pcv.width, h = pcv.height; px.clearRect(0, 0, w, h);
+    px.strokeStyle = "rgba(255,255,255,.06)"; px.lineWidth = 1; px.beginPath(); for (let i = 1; i < 4; i++) { px.moveTo(0, h * i / 4); px.lineTo(w, h * i / 4); } px.stroke();
+    const line = (arr, col, fill) => {
+      px.beginPath(); arr.forEach((v, i) => { const x = w - (arr.length - 1 - i) * (w / 59), y = h - v / 100 * h; i ? px.lineTo(x, y) : px.moveTo(x, y); });
+      px.strokeStyle = col; px.lineWidth = 3; px.stroke(); px.lineTo(w, h); px.lineTo(w - (arr.length - 1) * (w / 59), h); px.closePath(); px.fillStyle = fill; px.fill();
+    };
+    line(perf.cpu, rgb(ACC), `rgba(${ACC.join(",")},.16)`); line(perf.self, "#3ddc97", "rgba(61,220,151,.25)");
+  }
+  setInterval(perfTick, 500);
+
+  // Lobby widget
+  const FRIENDS = [
+    { user: "nova", c: "#8b5cf6", game: "Starfall Arena", title: "1v4 clutch with no shields left", likes: 48, com: 9, cotw: true, hue: 270 },
+    { user: "kitekat", c: "#f97316", game: "Drift Kings", title: "last-corner overtake, photo finish", likes: 21, com: 3, hue: 20 },
+    { user: "dex", c: "#10b981", game: "Hollow Peak", title: "this jump should not have worked", likes: 13, com: 5, hue: 150 },
+  ];
+  function scene(x, w, h, hue) {
+    const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, `hsl(${hue},55%,16%)`); g.addColorStop(0.6, `hsl(${hue + 30},60%,38%)`); g.addColorStop(1, `hsl(${hue + 50},70%,58%)`);
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    for (let k = 0; k < 3; k++) { x.beginPath(); x.moveTo(0, h); for (let i = 0; i <= 24; i++) x.lineTo(i / 24 * w, h * (0.6 + k * 0.13) - Math.sin(i * 0.9 + k * 2 + hue) * h * 0.06); x.lineTo(w, h); x.fillStyle = `hsla(${hue},40%,${10 - k * 3}%,.85)`; x.fill(); }
+  }
+  function renderFeed() {
+    const f = $("#feed"); f.innerHTML = "";
+    const mine = clips.filter(c => c.posted);
+    const items = [...mine.map(c => ({ you: true, c })), ...FRIENDS];
+    for (const it of items) {
+      const p = document.createElement("div"); p.className = "post";
+      const name = it.you ? "you" : it.user, col = it.you ? rgb(ACC) : it.c;
+      p.innerHTML = `<div class="who"><span class="av" style="background:${col}">${name[0].toUpperCase()}</span><b>@${name}</b><span>${it.you ? "Rewynd demo" : it.game}</span>${it.cotw ? '<span class="cotw">Clip of the Week</span>' : ""}</div>
+        <canvas width="320" height="180"></canvas><div class="ttl"></div>
+        <div class="act"><button type="button" class="lk${it.liked || (it.c && it.c.liked) ? " liked" : ""}"><span class="h">♥</span><span class="n"></span></button><button type="button">💬 <span>${it.you ? Math.floor((it.c.likes || 0) / 2) : it.com}</span></button></div>`;
+      p.querySelector(".ttl").textContent = it.you ? (it.c.auto ? `${it.c.label}!` : "clipped it on rewynd.app") : it.title;
+      const cvs = p.querySelector("canvas"), x = cvs.getContext("2d");
+      if (it.you) { const fr = it.c.frames.slice(Math.floor(it.c.a * it.c.frames.length), Math.ceil(it.c.b * it.c.frames.length)); cover(x, fr[0], 320, 180); anims.add({ cv: cvs, frames: fr, i: 0 }); }
+      else scene(x, 320, 180, it.hue);
+      const tgt = it.you ? it.c : it, lk = p.querySelector(".lk"), n = p.querySelector(".n");
+      const paint = () => { n.textContent = tgt.likes; lk.classList.toggle("liked", !!tgt.liked); };
+      paint(); tgt.paint = paint;
+      lk.onclick = () => { tgt.liked = !tgt.liked; tgt.likes += tgt.liked ? 1 : -1; paint(); if (tgt.liked) sfx.like(); };
+      f.append(p);
+    }
+  }
+  function postClip(c) {
+    if (c.posted) return; c.posted = true; c.likes = 0;
+    if (overlay.hidden) openOverlay(true);
+    showWidget("lobby"); renderFeed(); sfx.pop();
+    const fans = ["nova", "kitekat", "dex", "mo", "juno"].sort(() => Math.random() - 0.5);
+    fans.forEach((who, i) => setTimeout(() => {
+      c.likes++; c.paint && c.paint();
+      if (i === 0) toast({ title: `♥ @${who} liked your clip`, sub: "Your friends see it in the Lobby right away.", ms: 3500 });
+    }, 1600 + i * rnd(900, 1700)));
+  }
+
+  // ---------------------------------------------------------------- quick trim editor
+  const ed = { c: null, a: 0, b: 1, pos: 0, play: true, iv: 0 };
+  const ev = $("#edView"), evx = ev.getContext("2d");
+  function openEditor(c) {
+    ed.c = c; ed.a = c.a; ed.b = c.b; ed.pos = c.a; ed.play = !c.shot;
+    $("#edTitle").textContent = c.shot ? "Screenshot" : "Quick trim"; $("#edSub").textContent = c.shot ? "" : `${c.label} · no quality lost`;
+    $("#edTl").hidden = !!c.shot; $("#edPlay").hidden = $("#edSave").hidden = !!c.shot;
+    $("#edDiscord").textContent = c.shot ? "Copy" : "Fit for Discord"; $("#edDiscord").className = "chip"; delete $("#edDiscord").dataset.busy;
+    $("#edA").value = c.a * 1000; $("#edB").value = c.b * 1000;
+    if (!c.shot) strip($("#edStrip"), c.frames);
+    $("#editor").hidden = false; edPaint(); edTimer();
+    $("#edPlay").textContent = "Pause"; $("#edX").focus({ preventScroll: true });
+  }
+  function closeEditor() { $("#editor").hidden = true; clearInterval(ed.iv); ed.c = null; }
+  function edTimer() {
+    clearInterval(ed.iv);
+    ed.iv = setInterval(() => { if (!ed.c || !ed.play) return; ed.pos += 1 / ed.c.frames.length; if (ed.pos >= ed.b || ed.pos < ed.a) ed.pos = ed.a; edPaint(); }, 1000 / CAP_FPS);
+  }
+  function edPaint() {
+    const c = ed.c; if (!c) return;
+    const i = clamp(Math.floor(ed.pos * c.frames.length), 0, c.frames.length - 1);
+    cover(evx, c.frames[i], ev.width, ev.height);
+    if (c.shot) { $("#edTime").textContent = "PNG · copied when it was taken"; return; }
+    const sel = $("#edSel"); sel.style.left = ed.a * 100 + "%"; sel.style.width = (ed.b - ed.a) * 100 + "%";
+    $("#edHead").style.left = `calc(${ed.pos * 100}% - 1px)`;
+    const T = c.frames.length / CAP_FPS;
+    $("#edTime").textContent = `${(ed.a * T).toFixed(1)} s – ${(ed.b * T).toFixed(1)} s · ${((ed.b - ed.a) * T).toFixed(1)} s`;
+  }
+  const minGap = 0.12;
+  $("#edA").addEventListener("input", e => { ed.a = Math.min(e.target.value / 1000, ed.b - minGap); e.target.value = ed.a * 1000; ed.pos = ed.a; edPaint(); });
+  $("#edB").addEventListener("input", e => { ed.b = Math.max(e.target.value / 1000, ed.a + minGap); e.target.value = ed.b * 1000; ed.pos = Math.max(ed.a, ed.b - 0.15); edPaint(); });
+  $("#edPlay").addEventListener("click", e => { ed.play = !ed.play; e.target.textContent = ed.play ? "Pause" : "Play"; });
+  $("#edSave").addEventListener("click", () => {
+    const c = ed.c; c.a = ed.a; c.b = ed.b; renderGallery(); if (c.posted) renderFeed();
+    toast({ title: "Trimmed", sub: `Now ${dur(c)} long. Cut in place, no quality lost.`, ms: 3500 }); sfx.pop(); closeEditor();
+  });
+  $("#edDiscord").addEventListener("click", e => discord(e.currentTarget));
+  $("#edX").addEventListener("click", closeEditor);
+  $("#editor").addEventListener("click", e => { if (e.target.id === "editor") closeEditor(); });
+
+  // ---------------------------------------------------------------- the guide pill: walks you through once
+  const hint = $("#hint");
+  let step = 0;
+  const touch = matchMedia("(hover: none)").matches;
+  const HINTS = [touch ? "Tap here to save the last 8 seconds" : "Press C to save what just happened", touch ? "Nice. Tap here to open the overlay" : "Nice. Press Z to open the overlay"];
+  function progress(what) {
+    if (what === "clipped" && step === 0) step = 1;
+    if (what === "overlay") step = 2;
+    hint.hidden = step >= 2; if (step < 2) hint.textContent = HINTS[step];
+  }
+  hint.addEventListener("click", () => step === 0 ? saveClip() : openOverlay(true));
+  progress("");
+
+  // ---------------------------------------------------------------- controls under the demo + keys
+  $("#cClip").addEventListener("click", () => saveClip());
+  $("#cOverlay").addEventListener("click", () => openOverlay());
+  $("#cShot").addEventListener("click", screenshot);
+  $("#cSound").addEventListener("click", e => { soundOn = !soundOn; e.currentTarget.textContent = soundOn ? "Sound on" : "Sound off"; e.currentTarget.setAttribute("aria-pressed", soundOn); if (!soundOn && window.speechSynthesis) speechSynthesis.cancel(); });
+
+  let inView = true;
+  new IntersectionObserver(es => { inView = es[0].isIntersecting; }, { threshold: 0.2 }).observe(stage);
+  addEventListener("keydown", e => {
+    if (e.target.closest && e.target.closest("input, textarea, select")) return;
+    if (e.ctrlKey || e.metaKey) return;
+    const k = e.key.toLowerCase();
+    if (k === "escape") { if (!$("#editor").hidden) closeEditor(); else if (!overlay.hidden) openOverlay(false); return; }
+    if (!inView) return;
+    if (k === "c") { e.preventDefault(); saveClip(); }
+    else if (k === "z") { e.preventDefault(); openOverlay(); }
+    else if (k === "s" && !e.altKey) { e.preventDefault(); screenshot(); }
+    else if (k === "r" && !e.altKey) { e.preventDefault(); toggleRec(); }
+  });
+
+  // "Try it" buttons in the features list jump up and open the right widget
+  $$(".try").forEach(b => b.addEventListener("click", () => {
+    stage.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    const w = b.dataset.try;
+    setTimeout(() => {
+      if (w === "edit") { const c = clips.find(x => !x.shot) || saveClip(); if (c) openEditor(c); return; }
+      if (overlay.hidden) openOverlay(true);
+      showWidget(w);
+    }, reduce ? 0 : 450);
+  }));
+
+  // clock on the top bar
+  const clock = () => { $("#tbClock").textContent = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+  clock(); setInterval(clock, 30000);
+
+  // ---------------------------------------------------------------- size + main loop
+  function resize() {
+    const r = stage.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; U = Math.min(W, H) / 560;
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d); ctx.setTransform(d, 0, 0, d, 0, 0);
+    SW = 256; SH = Math.round(256 * H / W);
+    bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7); bg.addColorStop(0, "#151b36"); bg.addColorStop(1, "#06070c");
+    if (!overlay.hidden) $$(".w").forEach(w => { if (!w.hidden) { if (w.dataset.moved && !narrow()) { w.style.left = clamp(w.offsetLeft, 0, W - w.offsetWidth) + "px"; w.style.top = clamp(w.offsetTop, 56, H - 44) + "px"; } else layout(w.dataset.w, w); } });
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+
+  let last = performance.now(), capAcc = 0, pillAcc = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (document.hidden || !inView) return;
+    fpsN++; fpsT += dt; if (fpsT >= 0.5) { FPS = fpsN / fpsT; fpsN = 0; fpsT = 0; }
+    update(dt); draw();
+    capAcc += dt; if (capAcc >= 1 / CAP_FPS) { capAcc %= 1 / CAP_FPS; capture(); }
+    pillAcc += dt; if (pillAcc > 0.25) { pillAcc = 0; updatePills(); }
+  }
+  requestAnimationFrame(frame);
+  renderGallery();
 })();
 </script>
 
