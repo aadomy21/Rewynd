@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231e1e24'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23dcdce4'/%3E%3C/svg%3E">
+<meta property="og:title" content="Rewynd">
+<meta property="og:description" content="Record, clip, edit, stream and share your games on Windows. Press Alt+C to save the last moments. Light on your PC.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0e0f14">
+<title>Rewynd</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Rewynd records, clips, edits and streams your games on Windows, and stays light on your PC. Press Alt+C to save the last moments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one dark page, a wide stage for the overlay mock, then a narrow reading column with full-width bands.
+   Single dark look on purpose: it's the app's own palette, the colors of a game overlay. */
+:root {
+  --bg: #0e0f14;        /* the app's background, a touch deeper */
+  --panel: #171922;     /* widgets */
+  --panel2: #1f2230;    /* buttons, rows */
+  --line: #2a2e3d;
+  --fg: #ecedf3;
+  --dim: #9a9eb2;
+  --accent: #6c7bff;    /* Rewynd accent */
+  --accent2: #a06bff;
+  --rec: #ff4d5e;       /* recording red */
+  --ok: #3ddc97;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --wrap: 1120px;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.key { display: inline-flex; align-items: center; gap: 3px; font: 700 0.82em/1 var(--mono); color: var(--fg); white-space: nowrap; }
+.key kbd { font: inherit; padding: 0.38em 0.55em 0.3em; border-radius: 7px; background: var(--panel2); border: 1px solid var(--line); border-bottom-width: 3px; }
+
+/* ---- top navigation */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.nav .wrap { display: flex; align-items: center; gap: 28px; height: 62px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 20px/1 var(--display); letter-spacing: 0.01em; }
+.mark { width: 26px; height: 26px; border-radius: 50%; background: #1e1e24; display: grid; place-items: center; box-shadow: inset 0 0 0 1px #34343d; }
+.mark::after { content: ""; width: 11px; height: 11px; border-radius: 50%; background: #dcdce4; }
+.nav nav { display: flex; gap: 22px; margin-left: auto; }
+.nav nav a { text-decoration: none; color: var(--dim); font-weight: 500; font-size: 15px; }
+.nav nav a:hover { color: var(--fg); }
+.btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 600 16px/1 var(--body); padding: 14px 20px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel2); color: var(--fg); transition: transform .15s ease, background .15s ease; }
+.btn:hover { transform: translateY(-1px); background: #272b3b; }
+.btn.go { border: 0; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 8px 28px -10px color-mix(in srgb, var(--accent) 70%, transparent); }
+.btn.go:hover { background: linear-gradient(135deg, #7d8aff, #ad7dff); }
+.btn.small { padding: 10px 14px; font-size: 14px; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+
+/* ---- hero */
+.hero { padding-block: 72px 40px; }
+.hero-text { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+.hero h1 { font-size: clamp(44px, 7.4vw, 92px); font-weight: 700; letter-spacing: -0.02em; }
+.hero h1 .k { display: inline-block; }
+.hero h1 em { font-style: normal; background: linear-gradient(120deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lede { color: var(--dim); font-size: 19px; max-width: 34ch; }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.hero .fine { margin-top: 14px; color: var(--dim); font-size: 14px; }
+
+/* ---- the overlay mock: a game picture with Rewynd's overlay on top (sizes follow the box, so it scales on phones) */
+.stage { margin-top: 48px; position: relative; container-type: inline-size; border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 9; max-width: 100%; border: 1px solid var(--line); box-shadow: 0 40px 120px -40px #000, 0 0 0 1px #000; background: #0b0c12; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ov { position: absolute; font-family: "Segoe UI", var(--body); color: var(--fg); }
+.ov-bar { left: 50%; top: 2.2cqw; transform: translateX(-50%); display: flex; align-items: center; gap: 1.6cqw; padding: 0.9cqw 1.6cqw; border-radius: 1.2cqw; background: rgba(17, 18, 23, .86); border: 1px solid rgba(255,255,255,.07); font-size: 1.25cqw; backdrop-filter: blur(8px); white-space: nowrap; }
+.ov-bar .rec { display: inline-flex; align-items: center; gap: .6cqw; color: var(--fg); }
+.ov-bar .rec i { width: .8cqw; height: .8cqw; border-radius: 50%; background: var(--rec); box-shadow: 0 0 0 .3cqw rgba(255,77,94,.22); }
+.ov-bar .sep { width: 1px; height: 1.6cqw; background: rgba(255,255,255,.12); }
+.ov-bar .ic { display: flex; gap: 1cqw; }
+.ov-bar .ic b { width: 2.2cqw; height: 2.2cqw; border-radius: .6cqw; background: rgba(255,255,255,.06); display: grid; place-items: center; font-weight: 600; font-size: 1.05cqw; color: var(--dim); }
+.ov-bar .ic b.on { background: rgba(108,123,255,.22); color: #c9cfff; }
+.bat { display: inline-flex; align-items: center; gap: .5cqw; }
+.bat span { position: relative; width: 2.3cqw; height: 1.15cqw; border: .14cqw solid #cfd0da; border-radius: .3cqw; }
+.bat span::before { content: ""; position: absolute; inset: .14cqw; right: 22%; background: var(--ok); border-radius: .12cqw; }
+.bat span::after { content: ""; position: absolute; right: -.45cqw; top: 25%; width: .25cqw; height: 50%; background: #cfd0da; border-radius: 0 .1cqw .1cqw 0; }
+.ov-fps { left: 2cqw; top: 2.2cqw; padding: .7cqw 1.1cqw; border-radius: .9cqw; background: rgba(17,18,23,.72); font: 700 1.15cqw/1.3 var(--mono); }
+.ov-fps small { display: block; font-weight: 500; color: var(--dim); font-size: .95cqw; }
+.ov-fps .n { color: var(--ok); font-size: 1.9cqw; }
+.ov-toast { right: 2.2cqw; bottom: 2.4cqw; width: 30cqw; padding: 1.4cqw; border-radius: 1.4cqw; background: rgba(23,25,34,.94); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 2cqw 5cqw -1cqw rgba(0,0,0,.7); }
+.ov-toast .t { display: flex; align-items: center; gap: .8cqw; font-weight: 600; font-size: 1.5cqw; }
+.ov-toast .t i { width: 1.1cqw; height: 1.1cqw; border-radius: 50%; background: var(--ok); }
+.ov-toast .s { color: var(--dim); font-size: 1.1cqw; margin-top: .3cqw; }
+.strip { position: relative; display: grid; grid-template-columns: repeat(8, 1fr); gap: .25cqw; margin-top: 1.1cqw; height: 3.4cqw; }
+.strip span { border-radius: .35cqw; background: linear-gradient(160deg, #3a2f5e, #1b2e4a 60%, #3d2a3a); }
+.strip span:nth-child(3n) { background: linear-gradient(160deg, #2e3f5f, #422c4f); }
+.strip .sel { position: absolute; top: -.35cqw; bottom: -.35cqw; left: 18%; right: 9%; border: .3cqw solid var(--accent); border-radius: .6cqw; box-shadow: 0 0 0 100cqw rgba(14,15,20,.0); }
+.strip .sel::before, .strip .sel::after { content: ""; position: absolute; top: 25%; bottom: 25%; width: .4cqw; background: #fff; border-radius: .2cqw; }
+.strip .sel::before { left: -.35cqw; } .strip .sel::after { right: -.35cqw; }
+.ov-toast .row { display: flex; gap: .7cqw; margin-top: 1.1cqw; }
+.ov-toast .row b { flex: 1; text-align: center; font-weight: 600; font-size: 1.1cqw; padding: .75cqw 0; border-radius: .7cqw; background: rgba(255,255,255,.07); }
+.ov-toast .row b.a { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.ov-toast.pop { animation: pop .55s cubic-bezier(.2, 1.3, .4, 1) both; }
+@keyframes pop { from { transform: translateY(2cqw) scale(.94); opacity: .2; } to { transform: none; opacity: 1; } }
+.stage-note { margin-top: 14px; color: var(--dim); font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.stage-note button { font: 600 14px/1 var(--body); color: var(--fg); background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.stage-note button:hover { background: #272b3b; }
+
+/* ---- replay buffer explainer */
+.band { border-top: 1px solid var(--line); }
+.section { padding-block: 88px; }
+.section h2 { font-size: clamp(32px, 4.4vw, 52px); }
+.section .intro { color: var(--dim); max-width: 60ch; margin-top: 16px; font-size: 18px; }
+.buffer { margin-top: 44px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+.tl { position: relative; height: 64px; border-radius: 10px; background: repeating-linear-gradient(90deg, #232636 0 2px, transparent 2px 100%) 0 0 / calc(100% / 24) 100%, #1a1d29; overflow: hidden; }
+.tl .kept { position: absolute; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), color-mix(in srgb, var(--accent) 26%, transparent)); }
+.tl .trim { position: absolute; top: 4px; bottom: 4px; right: 6px; width: 10%; border-radius: 6px; border: 2px solid var(--accent2); background: color-mix(in srgb, var(--accent2) 40%, transparent); }
+.tl-key { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 16px; font-size: 14px; color: var(--dim); }
+.tl-key i { display: inline-block; width: 18px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.tl-key .k1 { background: color-mix(in srgb, var(--accent) 26%, transparent); } .tl-key .k2 { background: color-mix(in srgb, var(--accent2) 40%, transparent); border: 1px solid var(--accent2); }
+.tl .now { position: absolute; top: -6px; bottom: -6px; right: 0; width: 3px; background: var(--rec); }
+.tl-labels { display: flex; justify-content: space-between; margin-top: 10px; font: 500 13px/1 var(--mono); color: var(--dim); font-variant-numeric: tabular-nums; }
+.tl-labels .hl { color: var(--fg); }
+.steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 32px; }
+.steps3 h3 { font-size: 20px; margin-bottom: 6px; }
+.steps3 p { color: var(--dim); font-size: 16px; }
+
+/* ---- features: group name on the left, what it does on the right */
+.groups { margin-top: 52px; display: grid; gap: 0; }
+.group { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 40px; padding-block: 34px; border-top: 1px solid var(--line); }
+.group h3 { font-size: 28px; }
+.group h3 small { display: block; margin-top: 10px; font: 500 15px/1.5 var(--body); color: var(--dim); letter-spacing: 0; }
+.group ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 32px; }
+.group li { min-width: 0; color: var(--dim); font-size: 16px; }
+.group li b { display: block; color: var(--fg); font-weight: 600; margin-bottom: 2px; }
+
+/* ---- light on your PC */
+.light { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; align-items: start; }
+.figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 36px; }
+.fig { background: var(--panel); padding: 22px; }
+.fig .v { font: 700 clamp(30px, 3.6vw, 42px)/1 var(--display); font-variant-numeric: tabular-nums; }
+.fig .v small { font-size: .5em; color: var(--dim); margin-left: 4px; }
+.fig .l { color: var(--dim); font-size: 14px; margin-top: 8px; }
+.cmp { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
+.cmp h3 { font-size: 18px; font-family: var(--body); font-weight: 600; }
+.cmp .sub { color: var(--dim); font-size: 14px; margin-top: 4px; }
+.bars { display: grid; gap: 18px; margin-top: 22px; }
+.bar .top { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; }
+.bar .top span:last-child { font: 700 14px/1.6 var(--mono); color: var(--ok); white-space: nowrap; }
+.bar .track { margin-top: 8px; display: grid; gap: 5px; }
+.bar .track div { height: 8px; border-radius: 4px; }
+.bar .was { background: #3a3e52; }
+.bar .now { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.bar .nums { display: flex; justify-content: space-between; margin-top: 6px; font: 500 12px/1 var(--mono); color: var(--dim); font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 16px; margin-top: 18px; font-size: 13px; color: var(--dim); }
+.legend i { display: inline-block; width: 18px; height: 8px; border-radius: 4px; margin-right: 6px; vertical-align: middle; }
+
+/* ---- hotkeys */
+.keys { margin-top: 36px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; }
+.keys div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 13px; border-bottom: 1px solid var(--line); font-size: 16px; }
+.keys div span:first-child { min-width: 0; }
+
+/* ---- install */
+.install { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
+.install ol { list-style: none; counter-reset: s; margin: 32px 0 0; padding: 0; display: grid; gap: 22px; }
+.install li { counter-increment: s; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; }
+.install li::before { content: counter(s); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 700 15px/1 var(--mono); background: var(--panel2); border: 1px solid var(--line); }
+.install li b { display: block; font-weight: 600; }
+.install li p { color: var(--dim); font-size: 16px; }
+.reqs { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: grid; gap: 16px; align-content: start; }
+.reqs div { display: flex; justify-content: space-between; gap: 16px; font-size: 15px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.reqs div:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.reqs div span:first-child { color: var(--dim); }
+.reqs div span:last-child { text-align: right; }
+
+/* ---- closing band and footer */
+.closer { text-align: left; padding-block: 96px; background: radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 60%), radial-gradient(90% 120% at 0% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%), var(--bg); border-top: 1px solid var(--line); }
+.closer h2 { font-size: clamp(36px, 5.6vw, 68px); max-width: 16ch; }
+.closer .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--dim); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; }
+footer a { color: var(--dim); }
+footer .brand { font-size: 16px; color: var(--fg); margin-right: auto; }
+footer .mark { width: 20px; height: 20px; } footer .mark::after { width: 8px; height: 8px; }
+
+@media (max-width: 900px) {
+  .hero-text, .light, .install { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .group { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .steps3 { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .nav nav { display: none; }
+  .nav .btn { margin-left: auto; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .hero { padding-block: 44px 24px; }
+  .section { padding-block: 64px; }
+  .group ul, .keys, .figs { grid-template-columns: minmax(0, 1fr); }
+  .stage { border-radius: 12px; }
+  .ov-fps { display: none; }
+  .ov-toast { width: 44cqw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Rewynd</a>
+    <nav aria-label="Sections">
+      <a href="#how">Instant replay</a>
+      <a href="#features">Features</a>
+      <a href="#light">Light on your PC</a>
+      <a href="#install">Install</a>
+    </nav>
+    <a class="btn go small" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">Download</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <h1>That was sick.<br><em>Clip it.</em></h1>
+        <div>
+          <p class="lede">Rewynd keeps the last moments of your game. Press <span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span> and they're saved, ready to trim, share with friends or post.</p>
+          <div class="cta">
+            <a class="btn go" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download for Windows
+            </a>
+            <a class="btn" href="https://github.com/aadomy21/Rewynd#readme">Watch the demo</a>
+          </div>
+          <p class="fine">Free · Windows 10 and 11, 64-bit · Version 1.4.9</p>
+        </div>
+      </div>
+
+      <div class="stage" id="stage" aria-label="Rewynd's overlay on top of a game: the top bar, an FPS counter and the Clip saved pop-up">
+        <canvas id="game" aria-hidden="true"></canvas>
+        <div class="ov ov-fps" aria-hidden="true"><span class="n" id="fps">144</span> FPS<small>CPU 14% · GPU 61%</small></div>
+        <div class="ov ov-bar" aria-hidden="true">
+          <span class="rec"><i></i>Replay on · last 5:00</span>
+          <span class="sep"></span>
+          <span class="ic"><b class="on">C</b><b>G</b><b>L</b><b>V</b></span>
+          <span class="sep"></span>
+          <span class="bat"><span></span>78%</span>
+          <span id="clock">9:41 PM</span>
+        </div>
+        <div class="ov ov-toast pop" id="toast" aria-hidden="true">
+          <div class="t"><i></i>Clip saved</div>
+          <div class="s" id="toastSub">Last 5 minutes · trim it to the best part</div>
+          <div class="strip"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><div class="sel"></div></div>
+          <div class="row"><b>Trim</b><b>Fit for Discord</b><b class="a">Post</b></div>
+        </div>
+      </div>
+      <p class="stage-note">Try it: press <span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span> on this page, or <button type="button" id="clipBtn">save a clip</button></p>
+    </div>
+  </section>
+
+  <section class="band" id="how">
+    <div class="wrap section">
+      <p class="eyebrow">Instant replay</p>
+      <h2 style="margin-top:14px">It's already recording. You decide what to keep.</h2>
+      <p class="intro">While you play, Rewynd quietly keeps the last 5 minutes and lets older footage go, so nothing piles up on your drive. When something happens, you save it after the fact, then trim it to the moment.</p>
+      <div class="buffer">
+        <div class="tl" role="img" aria-label="The last five minutes are kept and saved; you trim the clip to the best 30 seconds">
+          <div class="kept"></div><div class="trim"></div><div class="now"></div>
+        </div>
+        <div class="tl-labels"><span>−5:00</span><span>−4:00</span><span>−3:00</span><span>−2:00</span><span>−1:00</span><span class="hl">now</span></div>
+        <p class="tl-key"><span><i class="k1"></i>Kept, and saved when you press Alt+C</span><span><i class="k2"></i>Trimmed to the moment</span></p>
+      </div>
+      <div class="steps3">
+        <div><h3>Press Alt+C</h3><p>Or press View + RB on a controller, or just say "clip that".</p></div>
+        <div><h3>Or let it notice</h3><p>Auto clips catch big moments on their own, plus kills, aces and wins in League of Legends and CS2.</p></div>
+        <div><h3>Trim right there</h3><p>The pop-up lets you cut it down instantly, with no quality lost, then share it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="features">
+    <div class="wrap section">
+      <p class="eyebrow">Everything in one overlay</p>
+      <h2 style="margin-top:14px">Record, edit, share, stream, talk.</h2>
+      <p class="intro">Press <span class="key"><kbd>Alt</kbd>+<kbd>Z</kbd></span> over any game and it's all there, in widgets you can move, resize and snap together.</p>
+      <div class="groups">
+        <div class="group">
+          <h3>Capture<small>Full screen, one app, or an area you drag.</small></h3>
+          <ul>
+            <li><b>Up to 4K, or up to 144 fps</b>Each sound on its own track: game, everything else, and your mic.</li>
+            <li><b>Screenshots</b>Of the whole screen or an area, copied so you can paste them anywhere.</li>
+            <li><b>Facecam</b>In a corner of your recordings, with mic noise removal for fans and hum.</li>
+            <li><b>Game detection</b>Instant replay starts when a game opens, and you get a recap when it closes.</li>
+          </ul>
+        </div>
+        <div class="group">
+          <h3>Edit<small>Quick fixes or a full studio.</small></h3>
+          <ul>
+            <li><b>Editor and Studio</b>Trim, crop, text, music, stickers, keyframes and GIFs.</li>
+            <li><b>Make it vertical</b>For TikTok, Shorts and Reels, with your facecam in a box on top.</li>
+            <li><b>Auto captions</b>What you say, on screen, made offline on your PC.</li>
+            <li><b>Montages</b>Cut to the beat of your song, plus automatic session recaps and meme captions.</li>
+          </ul>
+        </div>
+        <div class="group">
+          <h3>Share<small>With friends first.</small></h3>
+          <ul>
+            <li><b>The Lobby</b>A feed for you and your friends: likes, reactions, comments with timestamps, @tags and Clip of the Week.</li>
+            <li><b>Fit for Discord</b>Shrinks a clip under the upload limit and copies it, ready to paste.</li>
+            <li><b>Friends and chats</b>Message friends, send pictures, GIFs and clips, and see what they're playing.</li>
+            <li><b>Post anywhere</b>TikTok, Instagram, X or Reddit in a couple of clicks.</li>
+          </ul>
+        </div>
+        <div class="group">
+          <h3>Live<small>Stream without another app.</small></h3>
+          <ul>
+            <li><b>YouTube or any RTMP server</b>Use your own stream key, the way OBS does.</li>
+            <li><b>Live in the Lobby</b>Stream inside Rewynd for your friends, people you tag, or everyone.</li>
+            <li><b>Overlays</b>Text, a live timer, your logo, YouTube chat, and alerts for donations, subs and goals.</li>
+            <li><b>Keeps recording</b>Instant replay and recording keep working while you're live.</li>
+          </ul>
+        </div>
+        <div class="group">
+          <h3>Voice<small>What your friends hear.</small></h3>
+          <ul>
+            <li><b>Voice changer</b>24 voices, plus your own made in Voicelab.</li>
+            <li><b>Soundboard</b>Starter sounds, your own files, or the last 10 seconds you heard.</li>
+            <li><b>Rewynd Mic</b>A mic Discord, games and websites can pick, carrying your voice and your soundboard.</li>
+            <li><b>Bluetooth headphones</b>Connect them, and see their battery, without leaving your game.</li>
+          </ul>
+        </div>
+        <div class="group">
+          <h3>Make it yours<small>Your layout, your look.</small></h3>
+          <ul>
+            <li><b>Themes</b>Presets, your own colors, a picture background and UI sounds, or install one from the theme market.</li>
+            <li><b>Library</b>Search, filter by game, star favorites. The storage cleaner never touches starred clips.</li>
+            <li><b>Performance</b>CPU, memory, disks, network and GPU with live graphs, like Task Manager.</li>
+            <li><b>Mic and camera switch</b>Turn your mic or camera off for every app with one key.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="light">
+    <div class="wrap section light">
+      <div>
+        <p class="eyebrow">Light on your PC</p>
+        <h2 style="margin-top:14px">Your game gets the PC. Rewynd waits.</h2>
+        <p class="intro">The video is made by your graphics card's own encoder, and the overlay does almost nothing while it's closed.</p>
+        <div class="figs">
+          <div class="fig"><div class="v">~1<small>%</small></div><div class="l">of one CPU core while you play, overlay closed</div></div>
+          <div class="fig"><div class="v">140<small>MB</small></div><div class="l">of memory in use</div></div>
+          <div class="fig"><div class="v">144<small>fps</small></div><div class="l">recording at most, or up to 4K</div></div>
+          <div class="fig"><div class="v">5:00</div><div class="l">kept ready for instant replay (you pick the length)</div></div>
+        </div>
+      </div>
+      <div class="cmp">
+        <h3>Version 1.4.9 got faster</h3>
+        <p class="sub">Measured on the same PC, 1.4.8 against 1.4.9. Shorter is better.</p>
+        <div class="bars" id="bars"></div>
+        <div class="legend"><span><i style="background:#3a3e52"></i>1.4.8</span><span><i style="background:linear-gradient(90deg,var(--accent),var(--accent2))"></i>1.4.9</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap section">
+      <p class="eyebrow">Hotkeys</p>
+      <h2 style="margin-top:14px">Never leave the game.</h2>
+      <p class="intro">These are the defaults. Change any of them in Settings.</p>
+      <div class="keys">
+        <div><span>Open or close the overlay</span><span class="key"><kbd>Alt</kbd>+<kbd>Z</kbd></span></div>
+        <div><span>Save a clip</span><span class="key"><kbd>Alt</kbd>+<kbd>C</kbd></span></div>
+        <div><span>Instant replay on or off</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd></span></div>
+        <div><span>Start or stop recording</span><span class="key"><kbd>Alt</kbd>+<kbd>R</kbd></span></div>
+        <div><span>Pause or resume recording</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd></span></div>
+        <div><span>Screenshot</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd></span></div>
+        <div><span>Screenshot an area</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd></span></div>
+        <div><span>Mic on or off for all apps</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>M</kbd></span></div>
+        <div><span>Camera on or off for all apps</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>K</kbd></span></div>
+        <div><span>Voice changer on or off</span><span class="key"><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="install">
+    <div class="wrap section install">
+      <div>
+        <p class="eyebrow">Install</p>
+        <h2 style="margin-top:14px">Ready in a minute.</h2>
+        <ol>
+          <li><div><b>Download Rewynd-Setup.exe</b><p>About 210 MB, straight from the official GitHub releases.</p></div></li>
+          <li><div><b>Open it</b><p>If Windows says "Windows protected your PC", click More info, then Run anyway. Rewynd isn't signed with a paid certificate.</p></div></li>
+          <li><div><b>Click Install</b><p>Rewynd starts in the tray. Press Alt+Z in any game to open the overlay.</p></div></li>
+        </ol>
+      </div>
+      <div class="reqs">
+        <div><span>Works on</span><span>Windows 10 (2004 or newer) or 11, 64-bit</span></div>
+        <div><span>Admin rights</span><span>Not needed</span></div>
+        <div><span>Updates</span><span>Built in: one click, and it restarts</span></div>
+        <div><span>Your recordings</span><span>Saved on your PC, kept if you uninstall</span></div>
+        <div><span>Uninstall</span><span>Settings, Apps, Installed apps, Rewynd</span></div>
+        <a class="btn go" style="justify-self:start;margin-top:6px" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">Download Rewynd</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="closer">
+    <div class="wrap">
+      <h2>The next good play is yours to keep.</h2>
+      <div class="cta">
+        <a class="btn go" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">Download for Windows</a>
+        <a class="btn" href="https://github.com/aadomy21/Rewynd/releases/latest">What's new in 1.4.9</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Rewynd</a>
+    <a href="https://github.com/aadomy21/Rewynd/releases">Releases</a>
+    <a href="https://github.com/aadomy21/Rewynd#readme">Read me</a>
+    <span>For Windows 10 and 11</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- 1.4.9 against 1.4.8 (from the update log): shorter bars are better
+  const rows = [
+    ["Memory in use", 211, 140, "MB"],
+    ["Building the overlay", 1171, 402, "ms"],
+    ["Performance widget, each update", 24.9, 4.0, "ms"],
+    ["Highlight AI, each check", 8.4, 2.9, "ms"],
+    ["Stream overlays, each frame", 5.8, 2.0, "ms"],
+    ["Recorder's sound, per second", 4.8, 2.4, "ms"],
+  ];
+  const fmt = (v, u) => (v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(1)) + " " + u;
+  document.getElementById("bars").innerHTML = rows.map(([name, was, now, u]) => {
+    const tag = u === "MB" ? `${was - now} MB less` : `${(was / now).toFixed(1)}× faster`;
+    return `<div class="bar"><div class="top"><span>${name}</span><span>${tag}</span></div>
+      <div class="track"><div class="was" style="width:100%"></div><div class="now" style="width:${(now / was * 100).toFixed(1)}%"></div></div>
+      <div class="nums"><span>${fmt(was, u)}</span><span>${fmt(now, u)}</span></div></div>`;
+  }).join("");
+
+  // ---- the clock on the mock top bar shows the visitor's time
+  const clock = document.getElementById("clock");
+  const tick = () => { clock.textContent = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+  tick(); setInterval(tick, 30000);
+
+  // ---- a made-up game picture: a dusk valley with drifting light, drawn on a canvas
+  const cv = document.getElementById("game"), g = cv.getContext("2d");
+  let W = 0, H = 0, t = 0;
+  const size = () => { const r = cv.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); W = cv.width = Math.round(r.width * d); H = cv.height = Math.round(r.height * d); };
+  const ridge = (seed, y, amp, col) => {
+    g.beginPath(); g.moveTo(0, H);
+    for (let x = 0; x <= W; x += W / 120) {
+      const k = x / W;
+      g.lineTo(x, H * y - amp * H * (Math.sin(k * 7 + seed) * 0.5 + Math.sin(k * 17 + seed * 2.3) * 0.22 + Math.sin(k * 3.1 + seed * 0.7) * 0.6));
+    }
+    g.lineTo(W, H); g.closePath(); g.fillStyle = col; g.fill();
+  };
+  const motes = Array.from({ length: 46 }, (_, i) => ({ x: Math.random(), y: Math.random() * 0.7, r: 0.6 + Math.random() * 1.8, s: 0.2 + Math.random() * 0.6, p: i }));
+  const draw = () => {
+    const sky = g.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#1b1640"); sky.addColorStop(0.45, "#4b2c63"); sky.addColorStop(0.7, "#c2577a"); sky.addColorStop(1, "#f19a6b");
+    g.fillStyle = sky; g.fillRect(0, 0, W, H);
+    // the sun behind the hills
+    const sx = W * 0.62, sy = H * 0.6, sun = g.createRadialGradient(sx, sy, 0, sx, sy, H * 0.55);
+    sun.addColorStop(0, "rgba(255,214,160,.95)"); sun.addColorStop(0.12, "rgba(255,170,120,.55)"); sun.addColorStop(1, "rgba(255,120,120,0)");
+    g.fillStyle = sun; g.fillRect(0, 0, W, H);
+    ridge(1.2, 0.66, 0.10, "#6b3a6e");
+    ridge(2.6, 0.75, 0.09, "#3f2650");
+    ridge(4.1, 0.86, 0.08, "#21173a");
+    ridge(5.3, 0.97, 0.06, "#120e24");
+    // drifting light
+    for (const m of motes) {
+      const x = ((m.x + t * 0.004 * m.s) % 1) * W, y = (m.y + Math.sin(t * 0.02 + m.p) * 0.01) * H;
+      g.fillStyle = `rgba(255,225,200,${0.25 + 0.35 * Math.sin(t * 0.05 + m.p) ** 2})`;
+      g.beginPath(); g.arc(x, y, m.r * (W / 900), 0, Math.PI * 2); g.fill();
+    }
+    // a crosshair, so it reads as a game
+    const cx = W / 2, cy = H / 2, u = W / 260;
+    g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = Math.max(1, u * 0.45);
+    g.beginPath(); g.moveTo(cx - 3 * u, cy); g.lineTo(cx - 1.2 * u, cy); g.moveTo(cx + 1.2 * u, cy); g.lineTo(cx + 3 * u, cy);
+    g.moveTo(cx, cy - 3 * u); g.lineTo(cx, cy - 1.2 * u); g.moveTo(cx, cy + 1.2 * u); g.lineTo(cx, cy + 3 * u); g.stroke();
+  };
+  const loop = () => { t++; draw(); if (!reduce) requestAnimationFrame(loop); };
+  size(); loop();
+  new ResizeObserver(() => { size(); draw(); }).observe(cv);
+
+  // ---- the FPS counter wanders a little
+  const fps = document.getElementById("fps");
+  if (!reduce) setInterval(() => { fps.textContent = 141 + Math.round(Math.random() * 3); }, 900);
+
+  // ---- "save a clip": Alt+C on the page, or the button, plays the pop-up again
+  const toast = document.getElementById("toast"), sub = document.getElementById("toastSub");
+  let n = 1;
+  const clip = () => {
+    n++;
+    sub.textContent = `Clip ${n} today · trim it to the best part`;
+    toast.classList.remove("pop"); void toast.offsetWidth; toast.classList.add("pop");
+  };
+  document.getElementById("clipBtn").addEventListener("click", clip);
+  addEventListener("keydown", e => { if (e.altKey && (e.key === "c" || e.key === "C")) { e.preventDefault(); clip(); } });
+})();
+</script>
+
+</body>
+</html>
