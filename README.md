@@ -2,7 +2,7 @@ https://github.com/user-attachments/assets/78113051-86a0-4b34-8ce5-359123a97e27
 
 # Rewynd
 
-Record, clip, edit, stream and share your games — light on your PC.
+Record, clip, edit, stream and share your games — light on your PC. While you play with the overlay closed, Rewynd uses about 1% of one CPU core.
 
 ## Capture
 
@@ -12,7 +12,7 @@ Record, clip, edit, stream and share your games — light on your PC.
 - **Screenshots** of the whole screen or just an area, copied so you can paste them anywhere
 - **Facecam** in a corner of your recordings, and mic noise removal for fans and hum
 - **Game detection** — Rewynd starts instant replay when a game opens, and shows a recap when it closes
-- **FPS counter** and performance stats on screen while you play
+- **FPS counter** on screen while you play, and a **Performance** panel like Task Manager: CPU, memory, every disk, Wi-Fi / Ethernet and GPU, each with a 60-second graph
 - **Up to 4K, or up to 144 fps**
 - **Phone remote** — save clips, play sounds and switch voices from your phone on the same Wi-Fi
 
@@ -50,7 +50,7 @@ Record, clip, edit, stream and share your games — light on your PC.
 - **Soundboard** — starter sounds, your own files, sounds you record, or the last 10 seconds you heard
 - **Text to speech** into your mic
 - **Sounds & voices market** — share yours and add other people's
-- Works in Discord and games through a virtual mic
+- **Rewynd Mic** — a mic called "Rewynd Mic" that Discord, games and websites can pick, carrying your changed voice and soundboard (uses the free VB-CABLE driver, set up in one click)
 - **Sound setup** — pick your mic (phone mics through MicStream and similar apps too) and what you hear from
 - **Bluetooth headphones** — connect and disconnect them from Rewynd, and see their battery
 
@@ -61,7 +61,7 @@ Record, clip, edit, stream and share your games — light on your PC.
 - **Library** — search, filter by game, star your favorites
 - **Storage cleaner** — keeps the folder under a size you pick (starred clips are never touched)
 - **Your layout** — resize widgets, snap them together, pick which is on top, stand the top bar up on the side
-- **Battery on the top bar** — your laptop's and your Bluetooth headphones'
+- **Battery on the top bar** — your laptop's and your Bluetooth headphones'; the colour follows the level, and a bolt shows while it charges
 - Mic & camera kill switch for every app
 
 ## Hotkeys
