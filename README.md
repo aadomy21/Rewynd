@@ -33,9 +33,9 @@ Record, clip, edit, stream and share your games — light on your PC. While you 
 - **The Lobby** — share clips with friends: feed, likes, reactions, comments with timestamps, @tags, Clip of the Week
 - **Friends & chats** — message friends, send pictures, GIFs and clips
 - **Post on TikTok, Instagram, X or Reddit** in a couple of clicks
-- **Profiles** with a picture, banner, level, badges, collections and hours recorded
+- **Profiles** with a picture, banner, level, badges, collections, hours recorded and **the colours of your theme**. Open anyone's from their name on a comment, a chat, people search or the Market
 - **See what friends are playing**, weekly quests, and the most clipped games — with real game names ("Roblox", not "Roblox Game Client")
-- **The Market** — one place for themes, sounds and voices people share: search, popular or new, and upload your own sound files
+- **The Market** — one place for themes, sounds and voices people share: search, popular or new, and upload your own sound files. Each theme shows badges for what it includes (moving background, video, picture, sounds…)
 
 ## Live
 
@@ -56,8 +56,8 @@ Record, clip, edit, stream and share your games — light on your PC. While you 
 
 ## Make it yours
 
-- **Themes** — presets, your own colors, a picture background, UI sounds
-- **Themes in the Market** — install themes other people made, or share yours
+- **Themes** — presets, your own colors, outline color and thickness, a picture background, UI sounds, and **moving backgrounds** (space, a black hole, aurora, a neon grid, or your own video or GIF) behind the overlay
+- **Themes in the Market** — install themes other people made, or share yours (your background video goes with it)
 - **Library** — search, filter by game, star your favorites
 - **Storage cleaner** — keeps the folder under a size you pick (starred clips are never touched)
 - **Your layout** — resize widgets, snap them together, pick which is on top, stand the top bar up on the side
