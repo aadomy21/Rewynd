@@ -1,6 +1,8 @@
-https://github.com/user-attachments/assets/78113051-86a0-4b34-8ce5-359123a97e27
+<p align="center"><img src="docs/logo.png" width="112" alt="Rewynd logo"></p>
 
-# Rewynd
+<h1 align="center">Rewynd</h1>
+
+https://github.com/user-attachments/assets/78113051-86a0-4b34-8ce5-359123a97e27
 
 Record, clip, edit, stream and share your games — light on your PC. While you play with the overlay closed, Rewynd uses about 1% of one CPU core and about 140 MB of memory.
 
