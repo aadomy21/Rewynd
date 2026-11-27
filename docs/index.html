@@ -90,9 +90,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes blink { 50% { opacity: .2; } }
 .hint { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 2; display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; background: rgba(14,15,20,.8); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); font-weight: 600; font-size: 15px; cursor: pointer; white-space: nowrap; box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); animation: ping 2.4s ease-out infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } 70%, 100% { box-shadow: 0 0 0 14px transparent; } }
-.flash { position: absolute; inset: 0; z-index: 9; pointer-events: none; background: #fff; opacity: 0; }
-.flash.go { animation: flash .45s ease-out; }
-@keyframes flash { 0% { opacity: .55; } 100% { opacity: 0; } }
+.flash { position: absolute; inset: 0; z-index: 9; pointer-events: none; border-radius: inherit; opacity: 0; box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 40px color-mix(in srgb, var(--accent) 35%, transparent); }
+.flash.go { animation: glow .9s ease-out; }
+@keyframes glow { 0% { opacity: 0; } 20% { opacity: .9; } 100% { opacity: 0; } }
 
 /* toasts sit above the overlay, like in the app */
 .toasts { position: absolute; right: 14px; bottom: 14px; z-index: 7; display: flex; flex-direction: column-reverse; gap: 10px; width: min(330px, calc(100% - 28px)); pointer-events: none; }
@@ -161,11 +161,28 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tile:hover { outline: 2px solid var(--accent); outline-offset: -2px; }
 .empty { display: grid; place-items: center; text-align: center; gap: 6px; padding: 18px 8px; border: 1px dashed #343850; border-radius: 10px; color: var(--dim); font-size: 13.5px; }
 
-.pads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
-.pad { padding: 12px 4px; border-radius: 10px; border: 0; cursor: pointer; font-weight: 600; font-size: 12.5px; background: #262a3a; transition: transform .08s; position: relative; overflow: hidden; }
+.vtabs { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: #1f2230; }
+.vt { border: 0; border-radius: 999px; padding: 8px 6px; background: transparent; color: var(--dim); font-weight: 600; font-size: 13px; cursor: pointer; }
+.vt.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.vpage { display: grid; gap: 10px; }
+.vpage.drop { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 10px; }
+.vrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
+.looks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-height: 196px; overflow: auto; padding-right: 2px; }
+.look { padding: 9px 4px; border-radius: 9px; border: 0; background: #262a3a; font-weight: 600; font-size: 12px; cursor: pointer; }
+.look:hover { background: #2e3346; }
+.look.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.meter { flex: 1; height: 8px; border-radius: 4px; background: #11131b; overflow: hidden; }
+.meter b { display: block; height: 100%; width: 0; background: var(--ok); transition: width .08s linear; }
+.sbtop { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 6px; }
+.sbtop .chip { padding: 9px 4px; }
+.vol { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--dim); }
+.vol input { width: 84px; accent-color: var(--accent); }
+.vol b { color: var(--fg); font: 600 12px/1 var(--mono); min-width: 32px; text-align: right; }
+.pads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-height: 214px; overflow: auto; padding-right: 2px; }
+.pad { min-height: 46px; padding: 6px 4px; border-radius: 10px; border: 0; cursor: pointer; font-weight: 600; font-size: 12px; line-height: 1.2; background: #262a3a; transition: transform .08s, background .12s; overflow: hidden; }
 .pad:hover { background: #2e3346; }
-.pad:active, .pad.hit { transform: scale(.95); background: color-mix(in srgb, var(--accent) 40%, #262a3a); }
-.pad small { display: block; font-size: 18px; margin-bottom: 2px; }
+.pad:active { transform: scale(.96); }
+.pad.on { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
 .tts { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
 .tts input, .tts select { min-width: 0; font: 500 13.5px/1.2 var(--body); color: var(--fg); background: #11131b; border: 1px solid #30344a; border-radius: 9px; padding: 9px 10px; }
 .tts input { grid-column: 1 / -1; }
@@ -369,7 +386,7 @@ footer .mark { width: 20px; height: 20px; }
             </a>
             <a class="btn" href="https://github.com/aadomy21/Rewynd#readme">Watch the demo video</a>
           </div>
-          <p class="fine">Free · Windows 10 and 11, 64-bit · Version 1.4.9</p>
+          <p class="fine">Free · Windows 10 and 11, 64-bit · Version 1.5</p>
         </div>
       </div>
 
@@ -417,20 +434,32 @@ footer .mark { width: 20px; height: 20px; }
             <section class="w" data-w="voice">
               <header><h4>Voice</h4><span class="grip">drag me</span><button type="button" class="wx" aria-label="Close Voice">×</button></header>
               <div class="body">
-                <span class="lbl">Soundboard</span>
-                <div class="pads" id="pads"></div>
-                <span class="lbl">Say it</span>
-                <div class="tts">
-                  <input id="ttsText" value="gg, that was clean" aria-label="Text to say" maxlength="120">
-                  <select id="ttsVoice" aria-label="Voice">
-                    <option value="normal">Normal</option>
-                    <option value="chip">Chipmunk</option>
-                    <option value="deep">Deep</option>
-                    <option value="robot">Robot</option>
-                  </select>
-                  <button type="button" class="chip go" id="ttsGo">Say it</button>
+                <div class="vtabs" role="tablist"><button type="button" class="vt on" data-vt="vc">Voice changer</button><button type="button" class="vt" data-vt="sb">Soundboard</button></div>
+                <div id="vcPage" class="vpage">
+                  <div class="vrow"><b>Voice changer</b><label class="sw"><input type="checkbox" id="vcOn" checked><span></span></label></div>
+                  <p class="note" id="vcStatus">Pick a voice, then press ▶ to hear it.</p>
+                  <div class="looks" id="looks"></div>
+                  <div class="duo"><button type="button" class="chip go" id="vcSample">▶ Hear a sample</button><button type="button" class="chip" id="vcMic">Try my mic</button></div>
+                  <div class="vrow"><span class="lbl">Mic</span><div class="meter"><b id="vcMeter"></b></div></div>
+                  <p class="note" id="vcNote">In Rewynd, Discord and games hear this voice through Rewynd Mic.</p>
                 </div>
-                <p class="note" id="ttsNote">In Rewynd this goes into your mic, so Discord and games hear it.</p>
+                <div id="sbPage" class="vpage" hidden>
+                  <div class="sbtop"><button type="button" class="chip go" id="sbAdd">+ Add sounds</button><button type="button" class="chip" id="sbRec">● Record</button><button type="button" class="chip" id="sbStop">Stop all</button></div>
+                  <div class="vrow"><label class="sw"><input type="checkbox" id="sbHear" checked><span></span>Hear them</label><label class="vol"><span>Volume</span><input type="range" id="sbVol" min="0" max="100" value="80" aria-label="Soundboard volume"><b id="sbVolN">80%</b></label></div>
+                  <div class="pads" id="pads"></div>
+                  <input type="file" id="sbFile" accept="audio/*" multiple hidden>
+                  <div class="tts">
+                    <input id="ttsText" value="gg, that was clean" aria-label="Text to say" maxlength="120">
+                    <select id="ttsVoice" aria-label="Voice">
+                      <option value="normal">Normal</option>
+                      <option value="chip">Chipmunk</option>
+                      <option value="deep">Deep</option>
+                      <option value="robot">Robot</option>
+                    </select>
+                    <button type="button" class="chip go" id="ttsGo">Say it</button>
+                  </div>
+                  <p class="note" id="ttsNote">Click to play · click again to stop · drop sound files here to add</p>
+                </div>
               </div>
             </section>
 
@@ -528,7 +557,7 @@ footer .mark { width: 20px; height: 20px; }
         <div class="group">
           <div><h3>Capture<small>Full screen, one app, or an area you drag.</small></h3><button type="button" class="try" data-try="capture">Try Capture in the demo ↑</button></div>
           <ul>
-            <li><b>Up to 4K, or up to 144 fps</b>Each sound on its own track: game, everything else, and your mic.</li>
+            <li><b>Up to 4K, or up to 144 fps</b>Your PC's sound as one clean stream, and your mic on its own track.</li>
             <li><b>Screenshots</b>Of the whole screen or an area, copied so you can paste them anywhere.</li>
             <li><b>Facecam</b>In a corner of your recordings, with mic noise removal for fans and hum.</li>
             <li><b>Game detection</b>Instant replay starts when a game opens, and you get a recap when it closes.</li>
@@ -537,9 +566,9 @@ footer .mark { width: 20px; height: 20px; }
         <div class="group">
           <div><h3>Edit<small>Quick fixes or a full studio.</small></h3><button type="button" class="try" data-try="edit">Trim a clip in the demo ↑</button></div>
           <ul>
-            <li><b>Editor and Studio</b>Trim, crop, text, music, stickers, keyframes and GIFs.</li>
+            <li><b>Editor and Studio</b>Trim, crop, text, auto captions, music, stickers, keyframes and GIFs.</li>
             <li><b>Make it vertical</b>For TikTok, Shorts and Reels, with your facecam in a box on top.</li>
-            <li><b>Auto captions</b>What you say, on screen, made offline on your PC.</li>
+            <li><b>Bring your Medal clips</b>With their titles, games and dates, or straight from a Medal share link.</li>
             <li><b>Montages</b>Cut to the beat of your song, plus automatic session recaps and meme captions.</li>
           </ul>
         </div>
@@ -562,10 +591,10 @@ footer .mark { width: 20px; height: 20px; }
           </ul>
         </div>
         <div class="group">
-          <div><h3>Voice<small>What your friends hear.</small></h3><button type="button" class="try" data-try="voice">Play the soundboard ↑</button></div>
+          <div><h3>Voice<small>What your friends hear.</small></h3><button type="button" class="try" data-try="voice">Try the voice changer ↑</button></div>
           <ul>
-            <li><b>Voice changer</b>24 voices, plus your own made in Voicelab.</li>
-            <li><b>Soundboard</b>Starter sounds, your own files, or the last 10 seconds you heard.</li>
+            <li><b>Voice changer</b>24 voices plus your own, built on the NWaves audio library: natural pitch, robot, whisper, choir, each as loud as your own voice.</li>
+            <li><b>Soundboard</b>Every sound at the same volume, starting instantly. Drag your own files in, or get sounds from the Market.</li>
             <li><b>Rewynd Mic</b>A mic Discord, games and websites can pick, carrying your voice and your soundboard.</li>
             <li><b>Bluetooth headphones</b>Connect them, and see their battery, without leaving your game.</li>
           </ul>
@@ -573,10 +602,10 @@ footer .mark { width: 20px; height: 20px; }
         <div class="group">
           <div><h3>Make it yours<small>Your layout, your look.</small></h3><button type="button" class="try" data-try="themes">Change the theme ↑</button></div>
           <ul>
-            <li><b>Themes</b>Presets, your own colors, a picture background and UI sounds, or install one from the theme market.</li>
+            <li><b>Themes</b>Presets, your own colors, a picture background and UI sounds.</li>
+            <li><b>The Market</b>Themes, sounds and voices people share, in one place. Upload your own sounds.</li>
             <li><b>Library</b>Search, filter by game, star favorites. The storage cleaner never touches starred clips.</li>
             <li><b>Performance</b>CPU, memory, disks, network and GPU with live graphs, like Task Manager.</li>
-            <li><b>Mic and camera switch</b>Turn your mic or camera off for every app with one key.</li>
           </ul>
         </div>
       </div>
@@ -597,10 +626,10 @@ footer .mark { width: 20px; height: 20px; }
         </div>
       </div>
       <div class="cmp">
-        <h3>Version 1.4.9 got faster</h3>
-        <p class="sub">Measured on the same PC, 1.4.8 against 1.4.9. Shorter is better.</p>
+        <h3>Rewynd 1.5 got faster</h3>
+        <p class="sub">Measured on the same PC, 1.4.8 against 1.5. Shorter is better.</p>
         <div class="bars" id="bars"></div>
-        <div class="legend"><span><i style="background:#3a3e52"></i>1.4.8</span><span><i style="background:linear-gradient(90deg,var(--accent),var(--accent2))"></i>1.4.9</span></div>
+        <div class="legend"><span><i style="background:#3a3e52"></i>1.4.8</span><span><i style="background:linear-gradient(90deg,var(--accent),var(--accent2))"></i>1.5</span></div>
       </div>
     </div>
   </section>
@@ -652,7 +681,7 @@ footer .mark { width: 20px; height: 20px; }
       <h2>The next good play is yours to keep.</h2>
       <div class="cta">
         <a class="btn go" href="https://github.com/aadomy21/Rewynd/releases/latest/download/Rewynd-Setup.exe">Download for Windows</a>
-        <a class="btn" href="https://github.com/aadomy21/Rewynd/releases/latest">What's new in 1.4.9</a>
+        <a class="btn" href="https://github.com/aadomy21/Rewynd/releases/latest">What's new in 1.5</a>
       </div>
     </div>
   </section>
@@ -663,6 +692,7 @@ footer .mark { width: 20px; height: 20px; }
     <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Rewynd</a>
     <a href="https://github.com/aadomy21/Rewynd/releases">Releases</a>
     <a href="https://github.com/aadomy21/Rewynd#readme">Read me</a>
+    <a href="terms.html">Terms &amp; rules</a>
     <span>For Windows 10 and 11</span>
   </div>
 </footer>
@@ -676,8 +706,8 @@ footer .mark { width: 20px; height: 20px; }
   const rnd = (a, b) => a + Math.random() * (b - a);
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // ---------------------------------------------------------------- speed chart (from the 1.4.9 update log)
-  const rows = [["Memory in use", 211, 140, "MB"], ["Building the overlay", 1171, 402, "ms"], ["Performance widget, each update", 24.9, 4.0, "ms"],
+  // ---------------------------------------------------------------- speed chart (from the 1.5 update log)
+  const rows = [["Memory in use", 211, 140, "MB"], ["Building the overlay", 1171, 387, "ms"], ["Performance widget, each update", 24.9, 4.0, "ms"],
     ["Highlight AI, each check", 8.4, 2.9, "ms"], ["Stream overlays, each frame", 5.8, 2.0, "ms"], ["Recorder's sound, per second", 4.8, 2.4, "ms"]];
   const fmt = (v, u) => (v >= 100 ? Math.round(v).toLocaleString("en-US") : v.toFixed(1)) + " " + u;
   $("#bars").innerHTML = rows.map(([n, was, now, u]) => `<div class="bar"><div class="top"><span>${n}</span><span>${u === "MB" ? `${was - now} MB less` : `${(was / now).toFixed(1)}× faster`}</span></div>
@@ -691,23 +721,24 @@ footer .mark { width: 20px; height: 20px; }
     if (AC.state === "suspended") AC.resume();
     return AC;
   };
-  function tone(f, at, dur, type = "sine", vol = 0.2, f2) {
+  function tone(f, at, dur, type = "sine", vol = 0.2, f2, dest) {
     const a = ac(); if (!a || !soundOn) return;
     const t = a.currentTime + at, o = a.createOscillator(), g = a.createGain();
     o.type = type; o.frequency.setValueAtTime(f, t);
     if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(master); o.start(t); o.stop(t + dur + 0.05);
+    o.connect(g).connect(dest || master); o.start(t); o.stop(t + dur + 0.05);
     return o;
   }
-  function noise(at, dur, vol = 0.2, hp = 0) {
+  function noise(at, dur, vol = 0.2, hp = 0, dest, lp = 0) {
     const a = ac(); if (!a || !soundOn) return;
     const t = a.currentTime + at, len = Math.max(1, Math.floor(a.sampleRate * dur)), b = a.createBuffer(1, len, a.sampleRate), d = b.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     const s = a.createBufferSource(), g = a.createGain(); s.buffer = b;
     g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    let node = s; if (hp) { const f = a.createBiquadFilter(); f.type = "highpass"; f.frequency.value = hp; s.connect(f); node = f; }
-    node.connect(g).connect(master); s.start(t);
+    let node = s; if (hp) { const f = a.createBiquadFilter(); f.type = "highpass"; f.frequency.value = hp; node.connect(f); node = f; }
+    if (lp) { const f = a.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = lp; node.connect(f); node = f; }
+    node.connect(g).connect(dest || master); s.start(t);
   }
   const sfx = {
     clip() { tone(880, 0, 0.12, "triangle", 0.18); tone(1320, 0.07, 0.25, "triangle", 0.16); noise(0, 0.06, 0.08, 3000); },
@@ -715,13 +746,23 @@ footer .mark { width: 20px; height: 20px; }
     pop() { tone(660, 0, 0.1, "sine", 0.12, 990); },
     like() { tone(1046, 0, 0.12, "sine", 0.1); tone(1568, 0.06, 0.18, "sine", 0.08); },
   };
-  const board = [
-    ["📯", "Air horn", () => { for (const k of [0, 0.45]) for (const f of [415, 523, 622]) tone(f, k, 0.4, "sawtooth", 0.07); }],
-    ["🥁", "Ba dum tss", () => { tone(190, 0, 0.18, "sine", 0.4, 90); tone(150, 0.2, 0.18, "sine", 0.4, 70); noise(0.44, 0.9, 0.22, 6000); }],
-    ["🔔", "Ding", () => { tone(1318, 0, 1.4, "sine", 0.2); tone(2637, 0, 0.9, "sine", 0.06); }],
-    ["🌀", "Boing", () => { const o = tone(150, 0, 0.6, "triangle", 0.25); if (o) { const t = AC.currentTime; o.frequency.setValueCurveAtTime(new Float32Array([150, 520, 260, 470, 300, 420, 340]), t, 0.55); } }],
-    ["🎺", "Wrong", () => { [392, 370, 349].forEach((f, i) => tone(f, i * 0.32, 0.3, "sawtooth", 0.08)); tone(330, 0.96, 0.9, "sawtooth", 0.08, 300); }],
-    ["👏", "Applause", () => { for (let i = 0; i < 40; i++) noise(i * 0.045 + Math.random() * 0.03, 0.05, 0.08 + Math.random() * 0.06, 1500); }],
+  // the app's starter sounds, made on the fly; each draws into its own output and says how long it lasts
+  const STARTERS = [
+    ["Air horn", d => { for (const k of [0, 0.5]) for (const f of [415, 523, 622]) tone(f, k, 0.42, "sawtooth", 0.07, null, d); return 1; }],
+    ["Ba dum tss", d => { tone(190, 0, 0.18, "sine", 0.45, 90, d); tone(150, 0.2, 0.18, "sine", 0.45, 70, d); noise(0.44, 1.1, 0.22, 6000, d); return 1.6; }],
+    ["Drum roll", d => { for (let i = 0; i < 40; i++) { const t = i * 0.042; noise(t, 0.05, 0.05 + i * 0.004, 200, d, 3000); tone(120, t, 0.05, "sine", 0.05 + i * 0.003, 80, d); } noise(1.7, 1.3, 0.25, 4000, d); tone(80, 1.7, 0.6, "sine", 0.4, 40, d); return 3; }],
+    ["Applause", d => { for (let i = 0; i < 70; i++) noise(i * 0.035 + Math.random() * 0.03, 0.04, 0.05 + Math.random() * 0.08, 1500, d); return 2.6; }],
+    ["Cheering", d => { noise(0, 2.4, 0.12, 700, d, 3500); for (const t of [0.3, 0.9, 1.5]) tone(1800, t, 0.5, "sine", 0.05, 2600, d); return 2.5; }],
+    ["Laughter", d => { [0, 0.2, 0.4, 0.62, 0.84, 1.08].forEach((t, i) => { tone(300 - i * 14, t, 0.14, "sawtooth", 0.07, 260 - i * 14, d); noise(t, 0.08, 0.03, 2000, d); }); return 1.3; }],
+    ["Explosion", d => { noise(0, 2, 0.5, 0, d, 900); tone(70, 0, 1.2, "sine", 0.5, 30, d); return 2.1; }],
+    ["Wrong", d => { [392, 370, 349].forEach((f, i) => tone(f, i * 0.32, 0.3, "sawtooth", 0.08, null, d)); tone(330, 0.96, 0.9, "sawtooth", 0.08, 300, d); return 1.9; }],
+    ["Ding", d => { tone(1318, 0, 1.4, "sine", 0.2, null, d); tone(2637, 0, 0.9, "sine", 0.06, null, d); return 1.5; }],
+    ["Gong", d => { for (const [f, v] of [[98, 0.3], [196, 0.15], [270, 0.1], [405, 0.06]]) tone(f, 0, 3, "sine", v, f * 0.98, d); noise(0, 0.15, 0.08, 300, d, 2000); return 3; }],
+    ["Boing", d => { const o = tone(150, 0, 0.6, "triangle", 0.28, null, d); if (o) o.frequency.setValueCurveAtTime(new Float32Array([150, 520, 260, 470, 300, 420, 340]), AC.currentTime, 0.55); return 0.7; }],
+    ["Record scratch", d => { const o = tone(220, 0, 0.45, "sawtooth", 0.1, null, d); if (o) o.frequency.setValueCurveAtTime(new Float32Array([220, 900, 180, 700, 140]), AC.currentTime, 0.42); noise(0, 0.45, 0.06, 1200, d); return 0.5; }],
+    ["Crickets", d => { for (let g = 0; g < 4; g++) for (let i = 0; i < 3; i++) tone(4400, g * 0.6 + i * 0.07, 0.04, "sine", 0.06, null, d); return 2.4; }],
+    ["Boxing bell", d => { for (const t of [0, 0.32, 0.64]) for (const [f, v] of [[1046, 0.16], [1568, 0.08], [2793, 0.04]]) tone(f, t, 1.1, "sine", v, null, d); return 1.8; }],
+    ["Party horn", d => { const o = tone(520, 0, 0.9, "sawtooth", 0.09, null, d); if (o) o.frequency.setValueCurveAtTime(new Float32Array([520, 700, 560, 720, 600, 760]), AC.currentTime, 0.85); noise(0, 0.9, 0.03, 2500, d); return 1; }],
   ];
 
   // ---------------------------------------------------------------- themes (the app's own presets)
@@ -762,7 +803,7 @@ footer .mark { width: 20px; height: 20px; }
     const n = S.kills.length;
     if (n >= 3) {
       S.banner = { txt: n >= 5 ? "RAMPAGE" : n === 4 ? "QUAD KILL" : "TRIPLE KILL", t: S.t };
-      if (autoOn && replayOn && S.t - S.lastAuto > 6) { S.lastAuto = S.t; setTimeout(() => saveClip(n >= 4 ? "Quad kill" : "Triple kill", true), 1000); }
+      if (autoOn && replayOn && S.t - S.lastAuto > 45) { S.lastAuto = S.t; setTimeout(() => saveClip(n >= 4 ? "Quad kill" : "Triple kill", true), 1000); }
     }
   }
 
@@ -898,7 +939,8 @@ footer .mark { width: 20px; height: 20px; }
     if (ring.length < CAP_FPS) { toast({ title: "Play a second first", sub: "There's nothing to save yet.", kind: "warn" }); return; }
     const c = { id: ++clipN, label, auto, frames: ring.slice(), a: 0, b: 1, likes: 0, posted: false };
     clips.unshift(c); if (clips.length > 9) clips.pop();
-    flash(); sfx.clip(); clipToast(c); renderGallery(); progress("clipped");
+    if (!auto) { flash(); sfx.clip(); }   // auto clips are quiet: just the pop-up
+    clipToast(c); renderGallery(); progress("clipped");
     return c;
   }
   function screenshot() {
@@ -968,7 +1010,7 @@ footer .mark { width: 20px; height: 20px; }
     const m = Math.max(14, W * 0.02), gx = m + 266, gw = Math.max(240, Math.min(400, W - m * 2 - 266 - 316));
     // stack under the widget above it (by its real height) unless that one was moved or is closed
     const below = k => { const o = $(`.w[data-w="${k}"]`); return o.hidden || o.dataset.moved ? 64 : 64 + o.offsetHeight + 12; };
-    const L = { capture: [m, 64, 250], gallery: [gx, 64, gw], voice: [W - m - 300, 64, 300], perf: [m, below("capture"), 250], lobby: [W - m - 300, 64, 300], themes: [gx, below("gallery"), gw] }[name];
+    const L = { capture: [m, 64, 250], gallery: [gx, 64, gw], voice: [W - m - 330, 64, 330], perf: [m, below("capture"), 250], lobby: [W - m - 300, 64, 300], themes: [gx, below("gallery"), gw] }[name];
     el.style.left = L[0] + "px"; el.style.top = L[1] + "px"; el.style.width = L[2] + "px";
     el.style.maxHeight = (H - L[1] - 14) + "px";
   }
@@ -1029,9 +1071,96 @@ footer .mark { width: 20px; height: 20px; }
     }
   }
 
-  // Voice widget
-  $("#pads").innerHTML = board.map(([i, n], k) => `<button type="button" class="pad" data-p="${k}"><small aria-hidden="true">${i}</small>${n}</button>`).join("");
-  $("#pads").addEventListener("click", e => { const b = e.target.closest(".pad"); if (!b) return; board[+b.dataset.p][2](); b.classList.add("hit"); setTimeout(() => b.classList.remove("hit"), 150); });
+  // Voice widget: Voice changer | Soundboard, like the app
+  $$(".vt").forEach(t => t.addEventListener("click", () => {
+    $$(".vt").forEach(x => x.classList.toggle("on", x === t));
+    $("#vcPage").hidden = t.dataset.vt !== "vc"; $("#sbPage").hidden = t.dataset.vt !== "sb";
+  }));
+
+  // ---- soundboard: pads light up while they play, click again to stop
+  const pads = STARTERS.map(([name, make]) => ({ name, make }));
+  const playing = new Map();   // pad → { g, timer }
+  let sbBus = null;
+  const bus = () => { const a = ac(); if (!a) return null; if (!sbBus) { sbBus = a.createGain(); sbBus.connect(master); } sbBus.gain.value = ($("#sbHear").checked ? 1 : 0) * $("#sbVol").value / 100 * 1.6; return sbBus; };
+  function stopPad(p) {
+    const r = playing.get(p); if (!r) return;
+    playing.delete(p); clearTimeout(r.timer);
+    try { r.g.gain.setTargetAtTime(0, AC.currentTime, 0.02); setTimeout(() => r.g.disconnect(), 200); } catch { }
+    if (r.src) try { r.src.stop(); } catch { }
+    paintPads();
+  }
+  function playPad(p) {
+    if (playing.has(p)) { stopPad(p); return; }
+    const a = ac(), out = bus(); if (!a || !out) return;
+    const g = a.createGain(); g.connect(out);
+    let secs = 1, src = null;
+    if (p.buffer) { src = a.createBufferSource(); src.buffer = p.buffer; src.connect(g); src.start(); secs = p.buffer.duration; }
+    else secs = p.make(g) || 1;
+    playing.set(p, { g, src, timer: setTimeout(() => stopPad(p), secs * 1000 + 120) });
+    paintPads();
+  }
+  function paintPads() { $$(".pad").forEach((b, i) => b.classList.toggle("on", playing.has(pads[i]))); }
+  function renderPads() {
+    $("#pads").innerHTML = pads.map((p, i) => `<button type="button" class="pad" data-p="${i}"></button>`).join("");
+    $$(".pad").forEach((b, i) => { b.textContent = pads[i].name; b.title = "Click to play · click again to stop"; });
+    paintPads();
+  }
+  renderPads();
+  $("#pads").addEventListener("click", e => { const b = e.target.closest(".pad"); if (b) playPad(pads[+b.dataset.p]); });
+  $("#sbStop").addEventListener("click", () => [...playing.keys()].forEach(stopPad));
+  $("#sbVol").addEventListener("input", e => { $("#sbVolN").textContent = e.target.value + "%"; bus(); });
+  $("#sbHear").addEventListener("change", () => bus());
+
+  // your own sounds: silence at the ends cut, every sound levelled to the same loudness (like the app)
+  function tidy(buf) {
+    const a = AC, ch = buf.numberOfChannels, n = buf.length, d = [...Array(ch)].map((_, c) => buf.getChannelData(c));
+    const loud = i => { let m = 0; for (let c = 0; c < ch; c++) m = Math.max(m, Math.abs(d[c][i])); return m; };
+    let s0 = 0, e0 = n - 1; while (s0 < n && loud(s0) < 0.004) s0++; while (e0 > s0 && loud(e0) < 0.004) e0--;
+    if (s0 >= e0) return buf;
+    const pad = Math.floor(buf.sampleRate * 0.015); s0 = Math.max(0, s0 - pad); e0 = Math.min(n - 1, e0 + pad);
+    const len = Math.min(e0 - s0 + 1, buf.sampleRate * 30), out = a.createBuffer(ch, len, buf.sampleRate);
+    let sum = 0, blocks = 0, peak = 0; const B = Math.floor(buf.sampleRate / 20);
+    for (let at = 0; at < len; at += B) { let e = 0, k = 0; for (let i = at; i < Math.min(len, at + B); i++, k++) for (let c = 0; c < ch; c++) { const v = d[c][s0 + i]; e += v * v / ch; peak = Math.max(peak, Math.abs(v)); } const r = Math.sqrt(e / Math.max(1, k)); if (r > 0.004) { sum += r * r; blocks++; } }
+    const gain = blocks && peak ? Math.max(0.1, Math.min(12, 0.158 / Math.sqrt(sum / blocks), 0.95 / peak)) : 1;
+    for (let c = 0; c < ch; c++) { const o = out.getChannelData(c); for (let i = 0; i < len; i++) o[i] = d[c][s0 + i] * gain; }
+    return out;
+  }
+  async function addFiles(files) {
+    const a = ac(); if (!a) return;
+    let added = 0;
+    for (const f of files) {
+      if (!f.type.startsWith("audio/") && !/\.(mp3|wav|m4a|aac|ogg|flac|weba|webm)$/i.test(f.name)) continue;
+      try { const buf = tidy(await a.decodeAudioData(await f.arrayBuffer())); pads.push({ name: f.name.replace(/\.[^.]+$/, "").slice(0, 40), buffer: buf }); added++; }
+      catch { toast({ title: "Can't use that file", sub: f.name, kind: "warn", ms: 3000 }); }
+    }
+    if (added) { renderPads(); toast({ title: `${added} sound${added === 1 ? "" : "s"} added`, sub: "Levelled to the same loudness as the others.", ms: 3000 }); $("#pads").scrollTop = 1e6; }
+  }
+  $("#sbAdd").addEventListener("click", () => $("#sbFile").click());
+  $("#sbFile").addEventListener("change", e => { addFiles([...e.target.files]); e.target.value = ""; });
+  const sbPage = $("#sbPage");
+  sbPage.addEventListener("dragover", e => { if ([...(e.dataTransfer?.types || [])].includes("Files")) { e.preventDefault(); sbPage.classList.add("drop"); } });
+  sbPage.addEventListener("dragleave", e => { if (!sbPage.contains(e.relatedTarget)) sbPage.classList.remove("drop"); });
+  sbPage.addEventListener("drop", e => { e.preventDefault(); sbPage.classList.remove("drop"); addFiles([...e.dataTransfer.files]); });
+
+  // record a sound with your mic (up to 10 s)
+  let rec2 = null;
+  $("#sbRec").addEventListener("click", async () => {
+    const b = $("#sbRec");
+    if (rec2) { rec2.stop(); return; }
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch { toast({ title: "No mic here", sub: "This page can't use your mic. Recording sounds works in the app (and on the website once you allow the mic).", kind: "warn", ms: 4500 }); return; }
+    const chunks = []; rec2 = new MediaRecorder(stream);
+    rec2.ondataavailable = e => chunks.push(e.data);
+    const t0 = Date.now(), iv = setInterval(() => { b.textContent = `■ Stop 0:${String(Math.floor((Date.now() - t0) / 1000)).padStart(2, "0")}`; if (Date.now() - t0 > 10000) rec2?.stop(); }, 250);
+    rec2.onstop = async () => {
+      clearInterval(iv); stream.getTracks().forEach(t => t.stop()); rec2 = null; b.textContent = "● Record";
+      try { const buf = tidy(await ac().decodeAudioData(await new Blob(chunks).arrayBuffer())); const now = new Date(); pads.push({ name: `Sound ${now.toTimeString().slice(0, 8).replace(/:/g, "-")}`, buffer: buf }); renderPads(); $("#pads").scrollTop = 1e6; }
+      catch { toast({ title: "Couldn't keep that recording", sub: "Try again.", kind: "warn", ms: 3000 }); }
+    };
+    rec2.start(); b.textContent = "■ Stop 0:00";
+  });
+
   const TTS = { normal: [1, 1], chip: [2, 1.3], deep: [0.1, 0.8], robot: [0.5, 0.75] };
   $("#ttsGo").addEventListener("click", () => {
     const say = window.speechSynthesis;
@@ -1040,6 +1169,161 @@ footer .mark { width: 20px; height: 20px; }
     [u.pitch, u.rate] = TTS[$("#ttsVoice").value]; u.volume = soundOn ? 1 : 0; say.speak(u);
   });
   $("#ttsText").addEventListener("keydown", e => { if (e.key === "Enter") $("#ttsGo").click(); });
+
+  // ---- voice changer: the app's 24 voices, with the same settings
+  const VOICES = [
+    ["Normal", {}], ["Deep", { Pitch: -5 }], ["Chipmunk", { Pitch: 8 }], ["Kid", { Pitch: 4, LowCut: 180 }],
+    ["Monster", { Pitch: -9, Drive: 2.5, HighCut: 3200, Reverb: 0.15 }], ["Demon", { Pitch: -7, Ring: 30, Reverb: 0.3, Room: 0.85 }],
+    ["Robot", { Robot: 1, Ring: 60, Pitch: -1 }], ["Alien", { Pitch: 3, Ring: 260, Echo: 0.15, EchoMs: 90 }],
+    ["Radio", { LowCut: 450, HighCut: 3000, Drive: 3, Noise: 0.15 }], ["Telephone", { LowCut: 330, HighCut: 3400, Drive: 1 }],
+    ["Megaphone", { LowCut: 700, HighCut: 4200, Drive: 6, Gain: 0.8 }], ["Cave", { Echo: 0.35, EchoMs: 260, Reverb: 0.35, Room: 0.9 }],
+    ["Stadium", { Reverb: 0.45, Room: 0.95, Echo: 0.15, EchoMs: 420 }], ["Underwater", { HighCut: 900, Wobble: 0.6, Pitch: -1, Reverb: 0.2 }],
+    ["Ghost", { Pitch: 2, Reverb: 0.55, Room: 0.92, Echo: 0.25, EchoMs: 330, HighCut: 6000 }], ["Clean mic", { Clean: 1 }],
+    ["Autotune", { Autotune: 1, Reverb: 0.12 }], ["Cartoon", { Pitch: 10, Chorus: 0.25, LowCut: 200 }],
+    ["Giant", { Pitch: -12, Reverb: 0.35, Room: 0.95, HighCut: 5000 }], ["Choir", { Chorus: 1, Reverb: 0.4, Room: 0.9 }],
+    ["Old radio", { LowCut: 600, HighCut: 2600, Drive: 2, Crackle: 0.6, Noise: 0.25 }], ["Space helmet", { LowCut: 250, HighCut: 5000, Reverb: 0.3, Room: 0.35, Echo: 0.12, EchoMs: 45, Noise: 0.08 }],
+    ["Deep robot", { Pitch: -7, Robot: 1, Ring: 45 }], ["Whisper", { Whisper: 1, LowCut: 900 }],
+  ];
+  let look = 1;
+  $("#looks").innerHTML = VOICES.map(([n], i) => `<button type="button" class="look${i === look ? " on" : ""}" data-l="${i}">${n}</button>`).join("");
+  const vcStatus = t => { $("#vcStatus").textContent = t; };
+
+  // a spoken-sounding sample ("hey, that was clean"), made here: a voice-like buzz through vowel resonances.
+  // Pitch voices make it with the voice's own pitch and resonances moved up or down, the way a pitch shifter does.
+  const VOWEL = { a: [730, 1090, 2440], e: [530, 1840, 2480], i: [300, 2250, 3000], o: [570, 840, 2410], u: [320, 900, 2240] };
+  const PHRASE = [[0.26, "e", "i", 150, 175, "h"], [0.06], [0.22, "a", "a", 165, 150, "th"], [0.2, "o", "a", 150, 140, "w"], [0.06], [0.34, "i", "i", 160, 120, "k"]];
+  function speak(v) {
+    const a = AC, R = a.sampleRate, ratio = Math.pow(2, (v.Pitch || 0) / 12);
+    const total = PHRASE.reduce((s, x) => s + x[0], 0) + 0.25, n = Math.floor(R * total), out = new Float32Array(n);
+    const voices = v.Chorus ? [[1, 0], [1.013, 0.012], [0.988, 0.021]] : [[1, 0]];
+    for (const [det, delay] of voices) {
+      let t = 0.05, ph = 0; const st = [[0, 0], [0, 0], [0, 0]];
+      for (const seg of PHRASE) {
+        const [dur, v0, v1, f0a, f0b, cons] = seg;
+        if (!v0) { t += dur; continue; }
+        const s0 = Math.floor((t + delay) * R), len = Math.floor(dur * R);
+        for (let i = 0; i < len && s0 + i < n; i++) {
+          const k = i / len;
+          let f0 = (f0a + (f0b - f0a) * k) * ratio * det;
+          if (v.Robot) f0 = 105 * ratio;
+          if (v.Autotune) f0 = 440 * Math.pow(2, Math.round(12 * Math.log2(f0 / 440)) / 12);
+          ph += f0 / R; if (ph >= 1) ph -= 1;
+          let src = v.Whisper ? (Math.random() * 2 - 1) * 0.6 : (ph < 0.6 ? Math.sin(Math.PI * ph / 0.6) ** 2 : 0) - 0.3;
+          if (cons && k < 0.12) src = src * (k / 0.12) + (Math.random() * 2 - 1) * 0.25 * (1 - k / 0.12);
+          const fa = VOWEL[v0], fb = VOWEL[v1]; let y = src;
+          for (let r = 0; r < 3; r++) {
+            const f = Math.min(R * 0.45, (fa[r] + (fb[r] - fa[r]) * k) * ratio), bw = [80, 100, 140][r], q = Math.exp(-Math.PI * bw / R);
+            const a1 = 2 * q * Math.cos(2 * Math.PI * f / R), a2 = -q * q, yy = (1 - q) * y + a1 * st[r][0] + a2 * st[r][1];
+            st[r][1] = st[r][0]; st[r][0] = yy; y = yy;
+          }
+          const env = Math.min(1, i / (R * 0.02), (len - i) / (R * 0.05));
+          out[s0 + i] += y * env;
+        }
+        t += dur;
+      }
+    }
+    let rms = 0; for (const x of out) rms += x * x; rms = Math.sqrt(rms / n) || 1;
+    const buf = a.createBuffer(1, n, R), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = Math.max(-1, Math.min(1, out[i] * 0.12 / rms));
+    return buf;
+  }
+
+  // the effects after the voice itself: filters, wobble, ring, robot buzz, drive, hiss, crackle, echo, reverb
+  function chain(v, input, extra) {
+    const a = AC; let node = input; const keep = [];
+    const add = n => { node.connect(n); node = n; return n; };
+    if (v.LowCut) { const f = add(a.createBiquadFilter()); f.type = "highpass"; f.frequency.value = v.LowCut; f.Q.value = 0.7; }
+    if (v.HighCut) {
+      const f = add(a.createBiquadFilter()); f.type = "lowpass"; f.frequency.value = v.HighCut; f.Q.value = 0.9;
+      if (v.Wobble) { const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = v.Wobble; lg.gain.value = v.HighCut * 0.45; l.connect(lg).connect(f.frequency); l.start(); keep.push(l); }
+    }
+    if (v.Clean) { const c = add(a.createDynamicsCompressor()); c.threshold.value = -24; c.ratio.value = 3; const p = add(a.createBiquadFilter()); p.type = "highshelf"; p.frequency.value = 4500; p.gain.value = 3; }
+    if (v.Ring) { const g = add(a.createGain()); g.gain.value = 0.35; const o = a.createOscillator(), og = a.createGain(); o.frequency.value = v.Ring; og.gain.value = 0.65; o.connect(og).connect(g.gain); o.start(); keep.push(o); }
+    if (v.Robot) { const dl = a.createDelay(0.05), fb = a.createGain(), mix = a.createGain(); dl.delayTime.value = 0.008; fb.gain.value = 0.6; node.connect(mix); node.connect(dl); dl.connect(fb).connect(dl); dl.connect(mix); node = mix; }
+    if (v.Drive) { const w = add(a.createWaveShaper()), k = 1 + v.Drive, c = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; c[i] = Math.tanh(x * k) / Math.tanh(k) * 0.9; } w.curve = c; }
+    const sum = a.createGain(); node.connect(sum); node = sum;
+    if (v.Noise || v.Crackle) {
+      const len = a.sampleRate * 2, b = a.createBuffer(1, len, a.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.02 * (v.Noise || 0) + (Math.random() < 0.0004 * (v.Crackle || 0) ? (Math.random() * 2 - 1) * 0.3 : 0);
+      const s = a.createBufferSource(); s.buffer = b; s.loop = true; s.connect(sum); s.start(); keep.push(s);
+    }
+    const outG = a.createGain(); outG.gain.value = v.Gain || 1; node.connect(outG);
+    if (v.Echo) { const dl = a.createDelay(1), fb = a.createGain(), wet = a.createGain(); dl.delayTime.value = (v.EchoMs || 220) / 1000; fb.gain.value = 0.45; wet.gain.value = v.Echo; node.connect(dl); dl.connect(fb).connect(dl); dl.connect(wet).connect(outG); }
+    if (v.Reverb) {
+      const len = Math.floor(a.sampleRate * (0.6 + 2.6 * (v.Room ?? 0.7))), ir = a.createBuffer(2, len, a.sampleRate);
+      for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+      const cv = a.createConvolver(), wet = a.createGain(); cv.buffer = ir; wet.gain.value = v.Reverb * 0.6; node.connect(cv).connect(wet).connect(outG);
+    }
+    outG.connect(extra || master);
+    return { out: outG, keep };
+  }
+
+  let vcLive = null;   // what's playing now (a sample or your mic)
+  function stopVoice() {
+    if (!vcLive) return;
+    try { vcLive.src?.stop?.(); } catch { }
+    vcLive.stream?.getTracks().forEach(t => t.stop());
+    vcLive.keep.forEach(n => { try { n.stop(); } catch { } });
+    try { vcLive.out.disconnect(); } catch { }
+    clearTimeout(vcLive.timer); cancelAnimationFrame(vcLive.raf);
+    vcLive = null; $("#vcMeter").style.width = "0%";
+    $("#vcSample").textContent = "▶ Hear a sample"; $("#vcMic").textContent = "Try my mic";
+  }
+  const current = () => $("#vcOn").checked ? VOICES[look] : VOICES[0];
+  function meter(an) {
+    const data = new Float32Array(an.fftSize);
+    const step = () => { an.getFloatTimeDomainData(data); let m = 0; for (const x of data) m = Math.max(m, Math.abs(x)); $("#vcMeter").style.width = Math.min(100, m * 160) + "%"; if (vcLive) vcLive.raf = requestAnimationFrame(step); };
+    step();
+  }
+  function playSample() {
+    const was = vcLive?.kind; stopVoice(); if (was === "sample") return;
+    const a = ac(); if (!a || !soundOn) { vcStatus("Sound is off: press Sound on under the demo."); return; }
+    const [name, v] = current();
+    const src = a.createBufferSource(); src.buffer = speak(v);
+    const an = a.createAnalyser(); an.fftSize = 512; src.connect(an);
+    const fx = chain(v, an);
+    src.start();
+    vcLive = { kind: "sample", src, out: fx.out, keep: fx.keep, timer: setTimeout(stopVoice, (src.buffer.duration + 2.5) * 1000) };
+    meter(an);
+    $("#vcSample").textContent = "■ Stop";
+    vcStatus(`Playing “${name}” on a sample voice.`);
+  }
+  async function tryMic() {
+    const was = vcLive?.kind; stopVoice(); if (was === "mic") { vcStatus("Mic off."); return; }
+    const a = ac(); if (!a) return;
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); }
+    catch { vcStatus("This page can't use your mic here. Press ▶ to hear the voice on a sample instead."); return; }
+    const [name, v] = current();
+    const mic = a.createMediaStreamSource(stream), an = a.createAnalyser(); an.fftSize = 512; mic.connect(an);
+    let head = an, keep = [];
+    if (v.Pitch || v.Autotune) {
+      // pitch for a live voice: two overlapping read heads in a short delay (the website's quick version; the app uses NWaves)
+      try {
+        if (!a._pitchReady) {
+          const code = `registerProcessor("pitch",class extends AudioWorkletProcessor{static get parameterDescriptors(){return[{name:"ratio",defaultValue:1}]}constructor(){super();this.N=16384;this.b=new Float32Array(this.N);this.w=0;this.p=0;this.W=Math.round(sampleRate*0.045)}rd(x){x=((x%this.N)+this.N)%this.N;const i=x|0,f=x-i;return this.b[i]*(1-f)+this.b[(i+1)%this.N]*f}process(I,O,P){const i=I[0]&&I[0][0],o=O[0][0];if(!i)return true;const r=P.ratio[0];for(let k=0;k<i.length;k++){this.b[this.w]=i[k];this.p+=1-r;while(this.p<0)this.p+=this.W;while(this.p>=this.W)this.p-=this.W;const d1=this.p,d2=(this.p+this.W/2)%this.W,g=0.5-0.5*Math.cos(2*Math.PI*d1/this.W);o[k]=g*this.rd(this.w-4-d1)+(1-g)*this.rd(this.w-4-d2);this.w=(this.w+1)%this.N}for(let c=1;c<O[0].length;c++)O[0][c].set(o);return true}})`;
+          await a.audioWorklet.addModule(URL.createObjectURL(new Blob([code], { type: "text/javascript" })));
+          a._pitchReady = true;
+        }
+        const ps = new AudioWorkletNode(a, "pitch"); ps.parameters.get("ratio").value = Math.pow(2, (v.Pitch || 0) / 12);
+        an.connect(ps); head = ps;
+      } catch { }
+    }
+    const fx = chain(v, head);
+    vcLive = { kind: "mic", stream, out: fx.out, keep: fx.keep.concat(keep) };
+    meter(an);
+    $("#vcMic").textContent = "■ Mic off";
+    vcStatus(`Your mic as “${name}”. Use headphones so it doesn't echo.`);
+  }
+  $("#looks").addEventListener("click", e => {
+    const b = e.target.closest(".look"); if (!b) return;
+    look = +b.dataset.l; $$(".look").forEach((x, i) => x.classList.toggle("on", i === look));
+    const kind = vcLive?.kind; stopVoice();
+    if (kind === "mic") tryMic(); else playSample();
+  });
+  $("#vcSample").addEventListener("click", playSample);
+  $("#vcMic").addEventListener("click", tryMic);
+  $("#vcOn").addEventListener("change", e => { $("#looks").style.opacity = e.target.checked ? 1 : 0.45; const kind = vcLive?.kind; stopVoice(); if (kind === "mic") tryMic(); vcStatus(e.target.checked ? "Voice changer on." : "Off: your normal voice."); });
 
   // Performance widget (the game's FPS is real; the rest follows a typical gaming PC)
   const perf = { cpu: [], self: [] }, pcv = $("#perfCv"), px = pcv.getContext("2d");
